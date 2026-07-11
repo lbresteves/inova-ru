@@ -1,0 +1,17 @@
+name: Bloquear Push Direto na Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  block-push:
+    runs-on: ubuntu-latest
+    if: github.event.commits[0].author.name != 'github-actions[bot]' # Permite pushes de CI se necessário
+    steps:
+      - name: Rejeitar Push
+        run: |
+          echo "ERROR: Direct pushes to the 'main' branch are not allowed in this repository!"
+          echo "Please create a separate branch and open a Pull Request."
+          exit 1
