@@ -26,6 +26,9 @@ const MAPPING = {
   "questionmark.circle": "help-outline",
   eye: "visibility",
   "eye.slash": "visibility-off",
+  "arrow.clockwise": "refresh",
+  "clock.arrow.circlepath": "history",
+  "fork.knife": "restaurant",
 } satisfies Partial<Record<SFSymbol, MaterialIconName>>;
 
 /**

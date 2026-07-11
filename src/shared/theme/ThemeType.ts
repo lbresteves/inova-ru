@@ -4,10 +4,12 @@ export type ColorsType = {
   foreground: string;
   surface: string;
   primary: string;
+  primaryMuted: string;
   onPrimary: string;
   onPrimaryMuted: string;
   secondary: string;
   text: string;
+  mutedText: string;
   border: string;
   tabBarActiveTintColor: string;
   transparent: string;
