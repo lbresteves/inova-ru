@@ -1,2 +1,5 @@
-import { RootLayout } from "@/src/_app";
-export default RootLayout;
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return <Stack />;
+}

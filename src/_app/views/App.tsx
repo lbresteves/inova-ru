@@ -1,8 +1,7 @@
 import { ThemeProvider as EmotionProvider } from "@emotion/react";
 
-import { DarkTheme, ThemeProvider } from "expo-router";
+import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
 
 import { darkColorSchema, lightColorSchema, theme } from "@shared/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
