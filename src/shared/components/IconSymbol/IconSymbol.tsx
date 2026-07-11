@@ -21,6 +21,11 @@ const MAPPING = {
   "heart.fill": "favorite",
   heart: "favorite-border",
   "star.fill": "star",
+  "line.3.horizontal": "menu",
+  "bell.fill": "notifications",
+  "questionmark.circle": "help-outline",
+  eye: "visibility",
+  "eye.slash": "visibility-off",
 } satisfies Partial<Record<SFSymbol, MaterialIconName>>;
 
 /**

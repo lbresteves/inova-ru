@@ -4,6 +4,8 @@ export type ColorsType = {
   foreground: string;
   surface: string;
   primary: string;
+  onPrimary: string;
+  onPrimaryMuted: string;
   secondary: string;
   text: string;
   border: string;

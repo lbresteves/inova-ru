@@ -5,6 +5,8 @@ export const darkColorSchema: ThemeType["colors"] = {
   foreground: "#FFFFFF",
   surface: "#1E1E1E",
   primary: "#00675f",
+  onPrimary: "#FFFFFF",
+  onPrimaryMuted: "rgba(255, 255, 255, 0.18)",
   secondary: "#00aa9d",
   text: "#FFFFFF",
   border: "#ffffffde",
