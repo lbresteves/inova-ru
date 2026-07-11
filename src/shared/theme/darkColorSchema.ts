@@ -4,12 +4,11 @@ export const darkColorSchema: ThemeType["colors"] = {
   background: "#121212",
   foreground: "#FFFFFF",
   surface: "#1E1E1E",
-  primary: "#9f6ce7ff",
-
-  secondary: "#03DAC6",
+  primary: "#00675f",
+  secondary: "#00aa9d",
   text: "#FFFFFF",
   border: "#ffffffde",
   shadow: "#000000",
-  tabBarActiveTintColor: "#a87cdfff",
+  tabBarActiveTintColor: "#00aa9d",
   transparent: "transparent",
 };
