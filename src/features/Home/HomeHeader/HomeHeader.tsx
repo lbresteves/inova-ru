@@ -1,8 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { IconSymbol, MenuButton, StatusBadge } from "@shared/components";
-import type { ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 
-import { useBalanceVisibility } from "./hooks/useBalanceVisibility";
 import {
   BalanceBlock,
   BalanceLabel,
@@ -16,24 +15,10 @@ import {
   TopBarActions,
 } from "./styles/HomeHeader.styled";
 import type { HomeHeaderStatus } from "./types";
+import { getBalanceVisibilityIconName, getBalanceVisibilityLabel } from "../utils/home-utils";
 
-type IconName = ComponentProps<typeof IconSymbol>["name"];
 
-function getBalanceVisibilityLabel(isBalanceVisible: boolean) {
-  if (isBalanceVisible) {
-    return "Ocultar saldo";
-  }
 
-  return "Mostrar saldo";
-}
-
-function getBalanceVisibilityIconName(isBalanceVisible: boolean): IconName {
-  if (isBalanceVisible) {
-    return "eye";
-  }
-
-  return "eye.slash";
-}
 
 export interface HomeHeaderProps {
   name: string;
@@ -53,9 +38,14 @@ export function HomeHeader({
   onNotificationsPress,
 }: HomeHeaderProps) {
   const theme = useTheme();
-  const { isBalanceVisible, toggleBalanceVisibility } = useBalanceVisibility();
-  const balanceText = isBalanceVisible ? balance : "R$ ****";
+  const [isBalanceVisible, setIsBalanceVisible] = useState(true);
 
+  const balanceText = isBalanceVisible ? balance : "R$ ****";
+  
+  function toggleBalanceVisibility() {
+    setIsBalanceVisible((isVisible) => !isVisible);
+  }
+  
   return (
     <Container>
       <TopBar>
