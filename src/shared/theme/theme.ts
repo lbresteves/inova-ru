@@ -1,4 +1,5 @@
 import { darkColorSchema } from "./darkColorSchema";
+import { lightColorSchema } from "./lightColorSchema";
 import { ThemeType, TTextStyle } from "./ThemeType";
 
 const defaultTextStyle: TTextStyle = {
@@ -10,7 +11,7 @@ const defaultTextStyle: TTextStyle = {
 
 export const theme: ThemeType = {
   colors: {
-    ...darkColorSchema,
+    ...lightColorSchema,
     transparent: "transparent",
   },
 
