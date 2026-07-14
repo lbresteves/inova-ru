@@ -128,7 +128,7 @@ export default function PaymentScreen() {
       <QueryStateView
         actionLabel="Voltar para recarga"
         message="Os dados deste PIX não estão mais disponíveis. Gere um novo pagamento."
-        onAction={() => router.replace("/recharge")}
+        onAction={() => router.replace("/main/recharge")}
         title="Pagamento não encontrado"
       />
     );
@@ -174,7 +174,7 @@ export default function PaymentScreen() {
           <ResultActions>
             <AppButton
               label="Gerar novo PIX"
-              onPress={() => router.replace("/recharge")}
+              onPress={() => router.replace("/main/recharge")}
             />
             <AppButton
               label="Voltar ao início"

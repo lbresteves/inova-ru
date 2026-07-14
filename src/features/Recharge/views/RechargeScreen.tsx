@@ -60,7 +60,7 @@ export default function RechargeScreen() {
     try {
       const payment = await createPaymentMutation.mutateAsync(amount);
       router.push({
-        pathname: "/recharge/payment",
+        pathname: "/main/recharge/payment",
         params: { paymentId: payment.id },
       });
     } catch {

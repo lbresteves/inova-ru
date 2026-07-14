@@ -33,11 +33,11 @@ export default function HomeScreen() {
 
   function navigate(destination: DrawerDestination) {
     const routes: Record<Exclude<DrawerDestination, "logout">, string> = {
-      recharge: "/recharge",
-      rechargeHistory: "/recharge/history",
-      mealHistory: "/meals/history",
-      menu: "/meals/menu",
-      settings: "/settings",
+      recharge: "/main/recharge",
+      rechargeHistory: "/main/recharge/history",
+      mealHistory: "/main/meals/history",
+      menu: "/main/meals/menu",
+      settings: "/main/settings",
     };
     if (destination === "logout") {
       clearSession();
@@ -76,22 +76,22 @@ export default function HomeScreen() {
           name={summaryQuery.data.name}
           onHelpPress={() => router.push("/about")}
           onMenuPress={() => setDrawerOpen(true)}
-          onNotificationsPress={() => router.push("/settings")}
+          onNotificationsPress={() => router.push("/main/settings")}
           status={summaryQuery.data.status}
         />
         <Content>
-          <AppButton label="Recarregar créditos" onPress={() => router.push("/recharge")} />
+          <AppButton label="Recarregar créditos" onPress={() => router.push("/main/recharge")} />
           <CardGroup>
             <HomeActionCard
               description="Ver recargas via PIX"
               icon="clock.arrow.circlepath"
-              onPress={() => router.push("/recharge/history")}
+              onPress={() => router.push("/main/recharge/history")}
               title="Histórico de recargas"
             />
             <HomeActionCard
               description="Consumos nos RUs"
               icon="fork.knife"
-              onPress={() => router.push("/meals/history")}
+              onPress={() => router.push("/main/meals/history")}
               title="Histórico de refeições"
             />
           </CardGroup>
