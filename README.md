@@ -1,5 +1,17 @@
 # Créditos do RU - UFMG
 
+## Instalando dependências 
+
+Na raiz do projeto, execute:
+
+```bash
+npm ci
+```
+
+```bash
+npm install
+```
+
 ## Executar o projeto
 
 Abra dois terminais na raiz do projeto.
