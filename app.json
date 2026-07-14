@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "react-native-expo-boilerplate",
-    "slug": "react-native-expo-boilerplate",
+    "name": "inova-ru-app",
+    "slug": "inova-ru-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "reactnativeexpoboilerplate",
+    "scheme": "inovaru",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.lbresteves.inovaruapp"
     },
     "web": {
       "bundler": "metro",
@@ -24,6 +25,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      
       "expo-router",
       [
         "expo-splash-screen",
@@ -33,10 +35,27 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-dev-client",
+        {
+          "launchMode": "most-recent",
+          "defaultLaunchURL": "http://localhost:8081",
+          "android": {
+            "defaultLaunchURL": "http://10.0.0.2:8081"
+          }
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "26c1bfcc-13ab-4108-a965-bd6b6a366a2b"
+      }
+    },
+    "owner": "lbresteves"
   }
 }
