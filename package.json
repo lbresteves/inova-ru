@@ -41,6 +41,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@emotion/react": "^11.14.0",
+    "@mockoon/cli": "^9.7.0",
     "@types/react": "~19.1.10",
     "eslint": "^9.39.5",
     "eslint-config-expo": "~10.0.0",
