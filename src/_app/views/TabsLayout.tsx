@@ -34,8 +34,12 @@ export default function TabLayout() {
         name="home/index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <IconSymbol
+              size={28}
+              name="house.fill"
+              color={focused ? "tabBarActiveTintColor" : "mutedText"}
+            />
           ),
         }}
       />
@@ -43,8 +47,12 @@ export default function TabLayout() {
         name="products/index"
         options={{
           title: "Products",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="star.fill" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <IconSymbol
+              size={28}
+              name="star.fill"
+              color={focused ? "tabBarActiveTintColor" : "mutedText"}
+            />
           ),
         }}
       />

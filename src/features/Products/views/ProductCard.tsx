@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import { BoxContent, IconButton, ThemedText } from "@shared/components";
 import { useProductsAction, useProductsState } from "../hooks/useProductsSlice";
 import { IProductView } from "../types/IProduct";
@@ -9,8 +8,6 @@ export interface IProductCardProps extends React.ComponentProps<typeof Card> {
 }
 
 const ProductCard = ({ product, full }: IProductCardProps) => {
-  const theme = useTheme();
-
   const addFavoriteProduct = useProductsAction("addFavoriteProduct");
 
   const removeFavoriteProduct = useProductsAction("removeFavoriteProduct");
@@ -47,7 +44,7 @@ const ProductCard = ({ product, full }: IProductCardProps) => {
             onPress={handlePress}
             size={24}
             name={isFavorite ? "heart.fill" : "heart"}
-            color={theme.colors.primary}
+            color="primary"
           />
         </BoxContent>
       </BoxContent>
