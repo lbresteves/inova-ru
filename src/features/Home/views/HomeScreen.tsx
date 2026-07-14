@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import { IconSymbol } from "@shared/components";
 
 import { HomeHeader } from "../HomeHeader";
@@ -17,8 +16,6 @@ import {
 } from "./styles/HomeScreen.styled";
 
 export default function HomeScreen() {
-  const theme = useTheme();
-
   return (
     <>
       <Container contentContainerStyle={{ paddingBottom: 32 }}>
@@ -27,7 +24,7 @@ export default function HomeScreen() {
           <PrimaryAction activeOpacity={0.8}>
             <PrimaryActionContent>
               <IconSymbol
-                color={theme.colors.onPrimary}
+                color="onPrimary"
                 name="arrow.clockwise"
                 size={18}
               />
@@ -39,7 +36,7 @@ export default function HomeScreen() {
             <HistoryAction activeOpacity={0.8}>
               <ActionIconBox>
                 <IconSymbol
-                  color={theme.colors.primary}
+                  color="primary"
                   name="clock.arrow.circlepath"
                   size={22}
                 />
@@ -49,7 +46,7 @@ export default function HomeScreen() {
                 <HistoryDescription>Ver recargas via PIX</HistoryDescription>
               </ActionTexts>
               <IconSymbol
-                color={theme.colors.mutedText}
+                color="mutedText"
                 name="chevron.right"
                 size={18}
               />
@@ -58,7 +55,7 @@ export default function HomeScreen() {
             <HistoryAction activeOpacity={0.8}>
               <ActionIconBox>
                 <IconSymbol
-                  color={theme.colors.primary}
+                  color="primary"
                   name="fork.knife"
                   size={22}
                 />
@@ -68,7 +65,7 @@ export default function HomeScreen() {
                 <HistoryDescription>Consumos nos RUs</HistoryDescription>
               </ActionTexts>
               <IconSymbol
-                color={theme.colors.mutedText}
+                color="mutedText"
                 name="chevron.right"
                 size={18}
               />

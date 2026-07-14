@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import type { ComponentProps } from "react";
 
 import { IconSymbol } from "../IconSymbol/IconSymbol";
@@ -17,8 +16,6 @@ export function MenuButton({
   accessibilityLabel,
   onPress,
 }: MenuButtonProps) {
-  const theme = useTheme();
-
   return (
     <CircularIconButton
       accessibilityLabel={accessibilityLabel}
@@ -26,7 +23,7 @@ export function MenuButton({
       activeOpacity={0.75}
       onPress={onPress}
     >
-      <IconSymbol color={theme.colors.onPrimary} name={name} size={22} />
+      <IconSymbol color="onPrimary" name={name} size={22} />
     </CircularIconButton>
   );
 }
