@@ -1,86 +1,15 @@
 import styled from "@emotion/native";
-import { ThemedText } from "@shared/components";
+import { ThemedView } from "@shared/components";
 
-export const Container = styled.ScrollView(({ theme }) => ({
-  backgroundColor: theme.colors.surface,
-}));
-
+export const Root = styled(ThemedView)({ flex: 1 });
+export const HomeScroll = styled.ScrollView({ flex: 1 });
 export const Content = styled.View(({ theme }) => ({
-  backgroundColor: theme.colors.transparent,
-  gap: 12,
-  paddingHorizontal: 16,
-  paddingTop: 40,
+  alignSelf: "center",
+  gap: theme.layout.spacing.md,
+  maxWidth: theme.layout.contentMaxWidth,
+  paddingBottom: theme.layout.spacing.xxl,
+  paddingHorizontal: theme.layout.spacing.xl,
+  paddingTop: 34,
+  width: "100%",
 }));
-
-export const PrimaryAction = styled.TouchableOpacity(({ theme }) => ({
-  alignItems: "center",
-  backgroundColor: theme.colors.primary,
-  borderRadius: 12,
-  justifyContent: "center",
-  minHeight: 50,
-  paddingHorizontal: 16,
-}));
-
-export const PrimaryActionContent = styled.View({
-  alignItems: "center",
-  flexDirection: "row",
-  gap: 8,
-});
-
-export const PrimaryActionText = styled(ThemedText)(({ theme }) => ({
-  color: theme.colors.onPrimary,
-  fontSize: 15,
-  fontWeight: "700",
-  lineHeight: 20,
-}));
-
-export const HistoryActions = styled.View({
-  gap: 10,
-});
-
-export const HistoryAction = styled.TouchableOpacity(({ theme }) => ({
-  alignItems: "center",
-  backgroundColor: theme.colors.background,
-  borderColor: theme.colors.border,
-  borderRadius: 12,
-  borderWidth: 1,
-  elevation: 2,
-  flexDirection: "row",
-  gap: 12,
-  minHeight: 66,
-  paddingHorizontal: 16,
-  paddingVertical: 10,
-  shadowColor: theme.colors.shadow,
-  shadowOffset: {
-    width: 0,
-    height: 2,
-  },
-  shadowOpacity: 0.08,
-  shadowRadius: 8,
-}));
-
-export const ActionIconBox = styled.View(({ theme }) => ({
-  alignItems: "center",
-  backgroundColor: theme.colors.primaryMuted,
-  borderRadius: 10,
-  height: 42,
-  justifyContent: "center",
-  width: 42,
-}));
-
-export const ActionTexts = styled.View({
-  flex: 1,
-});
-
-export const HistoryTitle = styled(ThemedText)(({ theme }) => ({
-  color: theme.colors.text,
-  fontSize: 15,
-  fontWeight: "700",
-  lineHeight: 20,
-}));
-
-export const HistoryDescription = styled(ThemedText)(({ theme }) => ({
-  color: theme.colors.mutedText,
-  fontSize: 12,
-  lineHeight: 16,
-}));
+export const CardGroup = styled.View(({ theme }) => ({ gap: theme.layout.spacing.md }));

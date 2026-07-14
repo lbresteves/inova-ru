@@ -1,22 +1,23 @@
 {
   "expo": {
-    "name": "react-native-expo-boilerplate",
-    "slug": "react-native-expo-boilerplate",
+    "name": "Créditos do RU · UFMG",
+    "slug": "creditos-ru-ufmg",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "reactnativeexpoboilerplate",
+    "scheme": "creditosruufmg",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.creditosruufmg"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0A3F35"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.anonymous.creditosruufmg"
     },
     "web": {
       "bundler": "metro",
@@ -31,7 +32,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FFFFFF"
         }
       ]
     ],

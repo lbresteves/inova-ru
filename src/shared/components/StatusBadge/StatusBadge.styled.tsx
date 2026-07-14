@@ -1,20 +1,18 @@
 import styled from "@emotion/native";
-
 import { ThemedText } from "../ThemedText/ThemedText";
-import { ThemedView } from "../ThemedView/ThemedView";
 
-export const StatusBadgeContainer = styled(ThemedView)(({ theme }) => ({
+export const StatusBadgeContainer = styled.View(({ theme }) => ({
   alignItems: "center",
   backgroundColor: theme.colors.onPrimaryMuted,
-  borderRadius: 999,
+  borderRadius: theme.layout.radius.pill,
   justifyContent: "center",
   paddingHorizontal: 12,
   paddingVertical: 5,
 }));
 
 export const StatusBadgeText = styled(ThemedText)(({ theme }) => ({
-  color: theme.colors.onPrimary,
-  fontSize: 12,
-  fontWeight: "600",
-  lineHeight: 16,
+  ...theme.typography.caption,
+  color: theme.colors.textOnSoftSurface,
+  fontFamily: "Inter_700Bold",
+  fontWeight: "700",
 }));

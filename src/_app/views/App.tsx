@@ -1,34 +1,50 @@
 import { ThemeProvider as EmotionProvider } from "@emotion/react";
-import { DarkTheme, ThemeProvider } from "@react-navigation/native";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider as NavigationThemeProvider,
+} from "@react-navigation/native";
 import { darkColorSchema, lightColorSchema, theme } from "@shared/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useInitializeApp } from "../hooks/useInitializeApp";
-import RouterSlot from "./RouterSlot";
 
 export default function App() {
   const { colorScheme, loaded } = useInitializeApp();
+  const [queryClient] = useState(() => new QueryClient());
+
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
 
+  const colors = colorScheme === "dark" ? darkColorSchema : lightColorSchema;
+  const navigationTheme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
+
   return (
-    <ThemeProvider value={DarkTheme}>
-      <QueryClientProvider client={new QueryClient()}>
-        <EmotionProvider
-          theme={{
-            ...theme,
-            colors: colorScheme === "dark" ? darkColorSchema : lightColorSchema,
-          }}
-        >
+    <NavigationThemeProvider
+      value={{
+        ...navigationTheme,
+        colors: {
+          ...navigationTheme.colors,
+          background: colors.background,
+          border: colors.border,
+          card: colors.surface,
+          primary: colors.primary,
+          text: colors.text,
+        },
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <EmotionProvider theme={{ ...theme, colors }}>
           <SafeAreaProvider>
-            <RouterSlot />
-            <StatusBar style="inverted" />
+            <Stack screenOptions={{ headerShown: false, animation: "slide_from_right" }} />
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
           </SafeAreaProvider>
         </EmotionProvider>
       </QueryClientProvider>
-    </ThemeProvider>
+    </NavigationThemeProvider>
   );
 }

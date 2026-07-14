@@ -1,5 +1,5 @@
 import styled from "@emotion/native";
-import { ThemeType } from "../../theme";
+import type { ThemeType } from "../../theme";
 
 export interface IBoxProps {
   center?: boolean;
@@ -12,20 +12,15 @@ export interface IBoxProps {
   padding?: number;
   justifyContent?: "flex-start" | "center" | "flex-end" | "space-between";
 }
-export const Box = styled.View<IBoxProps>((props) => ({
+
+export const Box = styled.View<IBoxProps>(({ theme, ...props }) => ({
+  alignItems: props.center || props.centerHorizontal ? "center" : "stretch",
+  backgroundColor: props.bg ? theme.colors[props.bg] : theme.colors.transparent,
+  flex: props.flex,
+  flexDirection: props.flexDirection ?? "column",
+  gap: props.gap,
+  justifyContent:
+    props.center || props.centerVertical ? "center" : props.justifyContent ?? "flex-start",
+  padding: props.padding,
   width: "100%",
-  backgroundColor: props.bg ? props.theme.colors[props.bg] : "white",
-  flex: props.flex || 1,
-  flexDirection: props.flexDirection || "column",
-  justifyContent: props.centerVertical ? "center" : "flex-start",
-  alignItems: props.centerHorizontal ? "center" : "flex-start",
-  gap: props.gap || 0,
-  padding: props.padding || 0,
-  ...(props.center && {
-    justifyContent: "center",
-    alignItems: "center",
-  }),
-  ...(props.justifyContent && {
-    justifyContent: props.justifyContent,
-  }),
 }));

@@ -1,165 +1,67 @@
-import { darkColorSchema } from "./darkColorSchema";
-import { ThemeType, TTextStyle } from "./ThemeType";
-
-const defaultTextStyle: TTextStyle = {
-  fontSize: 16,
-  fontWeight: "normal",
-  lineHeight: 24,
-  color: "#000",
-};
+import type { ThemeType } from "./ThemeType";
+import { lightColorSchema } from "./lightColorSchema";
 
 export const theme: ThemeType = {
-  colors: {
-    ...darkColorSchema,
-    transparent: "transparent",
-  },
-
+  colors: lightColorSchema,
   typography: {
-    default: {
-      ...defaultTextStyle,
+    caption: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 12,
+      fontWeight: "400",
+      lineHeight: 16,
     },
-    btnText: {
-      ...defaultTextStyle,
+    bodySmall: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 14,
+      fontWeight: "400",
+      lineHeight: 20,
+    },
+    body: {
+      fontFamily: "Inter_400Regular",
+      fontSize: 16,
+      fontWeight: "400",
+      lineHeight: 24,
+    },
+    label: {
+      fontFamily: "Inter_600SemiBold",
+      fontSize: 13,
       fontWeight: "600",
-      lineHeight: 22,
-      color: "#ffffff",
+      lineHeight: 18,
     },
-    iconText: {
-      ...defaultTextStyle,
-      fontSize: 14,
-      fontWeight: "400",
+    button: {
+      fontFamily: "Inter_600SemiBold",
+      fontSize: 15,
+      fontWeight: "600",
+      lineHeight: 20,
     },
-    inputLabel: {
-      ...defaultTextStyle,
-      fontSize: 14,
-      fontWeight: "500",
-    },
-    inputText: {
-      ...defaultTextStyle,
-      fontSize: 16,
-      fontWeight: "400",
-    },
-    inputTextBold: {
-      ...defaultTextStyle,
-      fontSize: 16,
-      fontWeight: "700",
-    },
-    title: {
-      ...defaultTextStyle,
-      fontSize: 24,
-      fontWeight: "700",
-      lineHeight: 32,
-    },
-    subtitle: {
-      ...defaultTextStyle,
-      fontSize: 20,
+    screenTitle: {
+      fontFamily: "Poppins_600SemiBold",
+      fontSize: 19,
       fontWeight: "600",
       lineHeight: 28,
     },
-    link: {
-      ...defaultTextStyle,
-      fontSize: 14,
-      fontWeight: "500",
-      color: "primary",
+    sectionTitle: {
+      fontFamily: "Poppins_600SemiBold",
+      fontSize: 24,
+      fontWeight: "600",
+      lineHeight: 34,
+    },
+    displayAmount: {
+      fontFamily: "Poppins_700Bold",
+      fontSize: 32,
+      fontWeight: "700",
+      lineHeight: 44,
+    },
+    monospace: {
+      fontFamily: "SpaceMono",
+      fontSize: 12,
+      fontWeight: "400",
+      lineHeight: 18,
     },
   },
-
   layout: {
-    bottomTabs: {
-      height: 64,
-    },
-    header: {
-      height: 56,
-    },
-    spacing: {
-      small: 8,
-      medium: 16,
-      large: 24,
-    },
-    borderRadius: {
-      small: 4,
-      medium: 8,
-      large: 16,
-    },
-  },
-
-  buttons: {
-    outlined: {
-      primary: {
-        pressableStyles: {
-          backgroundColor: "transparent",
-          borderWidth: 1,
-          borderColor: "primary",
-        },
-        typographyStyles: {
-          color: "primary",
-        },
-        onPressed: {
-          backgroundColor: "",
-        },
-      },
-      secondary: {
-        pressableStyles: {
-          backgroundColor: "transparent",
-          borderWidth: 1,
-          borderColor: "secondary",
-        },
-        typographyStyles: {
-          color: "secondary",
-        },
-        onPressed: {
-          backgroundColor: "",
-        },
-      },
-      disabled: {
-        pressableStyles: {
-          backgroundColor: "transparent",
-          borderWidth: 1,
-          borderColor: "border",
-        },
-        typographyStyles: {
-          color: "text",
-        },
-      },
-    },
-
-    contained: {
-      primary: {
-        pressableStyles: {
-          backgroundColor: "primary",
-          borderWidth: 0,
-          borderColor: "primary",
-        },
-        typographyStyles: {
-          color: "text",
-        },
-        onPressed: {
-          backgroundColor: "primary",
-        },
-      },
-      secondary: {
-        pressableStyles: {
-          backgroundColor: "secondary",
-          borderWidth: 0,
-          borderColor: "secondary",
-        },
-        typographyStyles: {
-          color: "text",
-        },
-        onPressed: {
-          backgroundColor: "secondary",
-        },
-      },
-      disabled: {
-        pressableStyles: {
-          backgroundColor: "background",
-          borderWidth: 0,
-          borderColor: "border",
-        },
-        typographyStyles: {
-          color: "secondary",
-        },
-      },
-    },
+    contentMaxWidth: 720,
+    spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 32 },
+    radius: { sm: 8, md: 10, lg: 14, xl: 20, pill: 999 },
   },
 };

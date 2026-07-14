@@ -1,3 +1,3 @@
-import { HomeScreen } from "@/src/features/Home";
+import { PreLoaderScreen } from "@/src/_app";
 
-export default HomeScreen;
+export default PreLoaderScreen;

@@ -1,4 +1,3 @@
-import { IconSymbol } from "@/src/shared/components";
-import { ComponentProps } from "react";
+import type { IconSymbolName } from "@shared/components/IconSymbol/IconSymbol";
 
-export type TIconName = ComponentProps<typeof IconSymbol>["name"];
+export type TIconName = IconSymbolName;

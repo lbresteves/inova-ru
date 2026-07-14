@@ -1,49 +1,46 @@
 import { PropsWithChildren, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
-
-import { Colors } from "@shared/constants/Colors";
-import { useColorScheme } from "@shared/hooks/useColorScheme";
 import { IconSymbol } from "../IconSymbol/IconSymbol";
 import { ThemedText } from "../ThemedText/ThemedText";
-import { ThemedView } from "../ThemedView/ThemedView";
+import styled from "@emotion/native";
+
+const Root = styled.View(({ theme }) => ({ gap: theme.layout.spacing.sm }));
+const Heading = styled.Pressable(({ theme }) => ({
+  alignItems: "center",
+  backgroundColor: theme.colors.primaryDark,
+  borderRadius: theme.layout.radius.pill,
+  flexDirection: "row",
+  justifyContent: "space-between",
+  minHeight: 48,
+  paddingHorizontal: theme.layout.spacing.lg,
+}));
+const HeadingText = styled(ThemedText)(({ theme }) => ({
+  ...theme.typography.button,
+  color: theme.colors.onPrimaryMuted,
+  flex: 1,
+}));
+const Content = styled.View(({ theme }) => ({ paddingHorizontal: theme.layout.spacing.sm }));
 
 export function Collapsible({
   children,
   title,
-}: PropsWithChildren & { title: string }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const theme = useColorScheme() ?? "light";
-
+  defaultOpen = false,
+}: PropsWithChildren & { title: string; defaultOpen?: boolean }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <ThemedView>
-      <TouchableOpacity
-        style={styles.heading}
+    <Root>
+      <Heading
+        accessibilityRole="button"
+        accessibilityState={{ expanded: isOpen }}
         onPress={() => setIsOpen((value) => !value)}
-        activeOpacity={0.8}
       >
+        <HeadingText>{title}</HeadingText>
         <IconSymbol
-          name="chevron.right"
-          size={18}
-          weight="medium"
-          color={theme === "light" ? Colors.light.icon : Colors.dark.icon}
-          style={{ transform: [{ rotate: isOpen ? "90deg" : "0deg" }] }}
+          color="onPrimaryMuted"
+          name={isOpen ? "chevron.down" : "chevron.right"}
+          size={26}
         />
-
-        <ThemedText type="defaultSemiBold">{title}</ThemedText>
-      </TouchableOpacity>
-      {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
-    </ThemedView>
+      </Heading>
+      {isOpen ? <Content>{children}</Content> : null}
+    </Root>
   );
 }
-
-const styles = StyleSheet.create({
-  heading: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  content: {
-    marginTop: 6,
-    marginLeft: 24,
-  },
-});

@@ -1,22 +1,7 @@
+import { useTheme } from "@emotion/react";
 import { View, type ViewProps } from "react-native";
 
-import { useThemeColor } from "@shared/hooks/useThemeColor";
-
-export type ThemedViewProps = ViewProps & {
-  lightColor?: string;
-  darkColor?: string;
-};
-
-export function ThemedView({
-  style,
-  lightColor,
-  darkColor,
-  ...otherProps
-}: ThemedViewProps) {
-  const backgroundColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    "background"
-  );
-
-  return <View style={[{ backgroundColor }, style]} {...otherProps} />;
+export function ThemedView({ style, ...props }: ViewProps) {
+  const theme = useTheme();
+  return <View style={[{ backgroundColor: theme.colors.background }, style]} {...props} />;
 }

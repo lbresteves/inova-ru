@@ -265,7 +265,7 @@
   "proxyHost": "",
   "proxyRemovePrefix": false,
   "tlsOptions": {
-    "enabled": true,
+    "enabled": false,
     "type": "CERT",
     "pfxPath": "",
     "certPath": "",

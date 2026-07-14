@@ -1,26 +1,17 @@
-// Fallback for using MaterialIcons on Android and web.
-
+import { useTheme } from "@emotion/react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { SFSymbol, SymbolWeight } from "expo-symbols";
 import type { ComponentProps } from "react";
-import { OpaqueColorValue, type StyleProp, type TextStyle } from "react-native";
+import type { StyleProp, TextStyle } from "react-native";
+import type { ColorsType } from "@shared/theme";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
-type IconSymbolName = keyof typeof MAPPING;
 
-/**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
- */
 const MAPPING = {
   "house.fill": "home",
-  "paperplane.fill": "send",
-  "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
-  "heart.fill": "favorite",
-  heart: "favorite-border",
-  "star.fill": "star",
+  "chevron.down": "keyboard-arrow-down",
+  "arrow.left": "arrow-back",
   "line.3.horizontal": "menu",
   "bell.fill": "notifications",
   "questionmark.circle": "help-outline",
@@ -29,28 +20,38 @@ const MAPPING = {
   "arrow.clockwise": "refresh",
   "clock.arrow.circlepath": "history",
   "fork.knife": "restaurant",
+  "doc.on.doc": "content-copy",
+  checkmark: "check",
+  exclamationmark: "priority-high",
+  "info.circle": "info-outline",
+  xmark: "close",
+  "rectangle.portrait.and.arrow.right": "logout",
+  "gearshape.fill": "settings",
+  "creditcard.fill": "credit-card",
+  "calendar": "calendar-today",
+  "clock.fill": "schedule",
 } satisfies Partial<Record<SFSymbol, MaterialIconName>>;
 
-/**
- * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
- * This ensures a consistent look across platforms, and optimal resource usage.
- * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
- */
+export type IconSymbolName = keyof typeof MAPPING;
+
+export type IconSymbolProps = {
+  name: IconSymbolName;
+  size?: number;
+  color?: keyof ColorsType;
+  style?: StyleProp<TextStyle>;
+  weight?: SymbolWeight;
+};
+
 export function IconSymbol({
   name,
   size = 24,
-  color,
+  color = "text",
   style,
-}: {
-  name: IconSymbolName;
-  size?: number;
-  color: string | OpaqueColorValue;
-  style?: StyleProp<TextStyle>;
-  weight?: SymbolWeight;
-}) {
+}: IconSymbolProps) {
+  const theme = useTheme();
   return (
     <MaterialIcons
-      color={color}
+      color={theme.colors[color]}
       size={size}
       name={MAPPING[name]}
       style={style}
