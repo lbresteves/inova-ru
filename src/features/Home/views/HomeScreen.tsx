@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { IconSymbol } from "@shared/components";
 
 import { HomeHeader } from "../HomeHeader";
@@ -15,11 +16,20 @@ import {
   PrimaryActionText,
 } from "./styles/HomeScreen.styled";
 
+import { SideMenu } from "@features/SideMenu/views/SideMenu";
+
 export default function HomeScreen() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <>
       <Container contentContainerStyle={{ paddingBottom: 32 }}>
-        <HomeHeader balance="R$ 45,50" name="João" status="Ativo" />
+        <HomeHeader
+          balance="R$ 45,50"
+          name="João"
+          status="Ativo"
+          onMenuPress={() => setIsMenuOpen(true)}
+        />
         <Content>
           <PrimaryAction activeOpacity={0.8}>
             <PrimaryActionContent>
@@ -73,6 +83,11 @@ export default function HomeScreen() {
           </HistoryActions>
         </Content>
       </Container>
+
+      <SideMenu
+        visible={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+      />
     </>
   );
 }
