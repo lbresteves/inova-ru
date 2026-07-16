@@ -1,4 +1,4 @@
-import { useTheme } from "@emotion/react";
+import { useState } from "react";
 import { IconSymbol } from "@shared/components";
 
 import { HomeHeader } from "../HomeHeader";
@@ -16,18 +16,25 @@ import {
   PrimaryActionText,
 } from "./styles/HomeScreen.styled";
 
+import { SideMenu } from "@features/SideMenu/views/SideMenu";
+
 export default function HomeScreen() {
-  const theme = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
       <Container contentContainerStyle={{ paddingBottom: 32 }}>
-        <HomeHeader balance="R$ 45,50" name="João" status="Ativo" />
+        <HomeHeader
+          balance="R$ 45,50"
+          name="João"
+          status="Ativo"
+          onMenuPress={() => setIsMenuOpen(true)}
+        />
         <Content>
           <PrimaryAction activeOpacity={0.8}>
             <PrimaryActionContent>
               <IconSymbol
-                color={theme.colors.onPrimary}
+                color="onPrimary"
                 name="arrow.clockwise"
                 size={18}
               />
@@ -39,7 +46,7 @@ export default function HomeScreen() {
             <HistoryAction activeOpacity={0.8}>
               <ActionIconBox>
                 <IconSymbol
-                  color={theme.colors.primary}
+                  color="primary"
                   name="clock.arrow.circlepath"
                   size={22}
                 />
@@ -49,7 +56,7 @@ export default function HomeScreen() {
                 <HistoryDescription>Ver recargas via PIX</HistoryDescription>
               </ActionTexts>
               <IconSymbol
-                color={theme.colors.mutedText}
+                color="mutedText"
                 name="chevron.right"
                 size={18}
               />
@@ -58,7 +65,7 @@ export default function HomeScreen() {
             <HistoryAction activeOpacity={0.8}>
               <ActionIconBox>
                 <IconSymbol
-                  color={theme.colors.primary}
+                  color="primary"
                   name="fork.knife"
                   size={22}
                 />
@@ -68,7 +75,7 @@ export default function HomeScreen() {
                 <HistoryDescription>Consumos nos RUs</HistoryDescription>
               </ActionTexts>
               <IconSymbol
-                color={theme.colors.mutedText}
+                color="mutedText"
                 name="chevron.right"
                 size={18}
               />
@@ -76,6 +83,11 @@ export default function HomeScreen() {
           </HistoryActions>
         </Content>
       </Container>
+
+      <SideMenu
+        visible={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+      />
     </>
   );
 }
