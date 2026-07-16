@@ -9,7 +9,7 @@ import { type StyleProp, type TextStyle } from "react-native";
 import type { ThemeType } from "../../theme";
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>["name"];
-type IconSymbolName = keyof typeof MAPPING;
+export type IconSymbolName = keyof typeof MAPPING;
 type ThemeColorName = keyof ThemeType["colors"];
 
 /**
@@ -18,6 +18,7 @@ type ThemeColorName = keyof ThemeType["colors"];
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
 const MAPPING = {
+  "arrow.left": "arrow-back",
   "house.fill": "home",
   "paperplane.fill": "send",
   "chevron.left.forwardslash.chevron.right": "code",

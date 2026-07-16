@@ -15,4 +15,6 @@ export const lightColorSchema: ThemeType["colors"] = {
   shadow: "#000000",
   tabBarActiveTintColor: "#00675f",
   transparent: "transparent",
+  returnBtnBackground: "#E4F3EA",
+  returnIconColor: "#0C5347",
 };

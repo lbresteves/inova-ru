@@ -14,6 +14,8 @@ export type ColorsType = {
   tabBarActiveTintColor: string;
   transparent: string;
   shadow: string;
+  returnBtnBackground: string;
+  returnIconColor: string;
 };
 
 export type TTextStyle = {
