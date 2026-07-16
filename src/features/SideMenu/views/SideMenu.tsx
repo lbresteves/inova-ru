@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MenuButton } from "@shared/components";
 import { useRouter } from "expo-router";
 import { Animated, Easing, Modal, useWindowDimensions } from "react-native";
-import type { SideMenuProps } from "../types";
+
 import {
   FooterContainer,
   MenuAnimationContainer,
@@ -21,6 +21,10 @@ const AnimatedMenuAnimationContainer =
 const AnimatedOverlayAnimationContainer = Animated.createAnimatedComponent(
   OverlayAnimationContainer
 );
+export interface SideMenuProps {
+  visible: boolean;
+  onClose: () => void;
+}
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter();
