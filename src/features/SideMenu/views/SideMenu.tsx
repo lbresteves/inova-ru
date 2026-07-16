@@ -69,8 +69,6 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
   function handleNavigation(route: string) {
     onClose();
-    // router.push(route as any);
-    // console.log(`[Router Output] Navegando para: ${route}`);
   }
 
   return (
@@ -120,8 +118,6 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                 accessibilityRole="button"
                 onPress={() => {
                   onClose();
-                  // router.replace("/login");
-                  // console.log("[Router Output] Sair da conta");
                 }}
               >
                 <MenuItemText>Sair</MenuItemText>
