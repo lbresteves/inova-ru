@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { IconSymbol } from "@shared/components";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
 import { HomeHeader } from "../HomeHeader";
 import {
@@ -20,6 +21,7 @@ import { SideMenu } from "@features/SideMenu/views/SideMenu";
 
 export default function HomeScreen() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -29,6 +31,7 @@ export default function HomeScreen() {
           name="João"
           status="Ativo"
           onMenuPress={() => setIsMenuOpen(true)}
+          onHelpPress={() => router.push("/about")}
         />
         <Content>
           <PrimaryAction activeOpacity={0.8}>
