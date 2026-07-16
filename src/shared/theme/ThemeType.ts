@@ -10,6 +10,8 @@ export type ColorsType = {
   secondary: string;
   text: string;
   mutedText: string;
+  controlMuted: string;
+  controlDisabled: string;
   border: string;
   tabBarActiveTintColor: string;
   transparent: string;
