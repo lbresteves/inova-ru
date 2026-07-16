@@ -6,22 +6,30 @@ export const MenuWrapper = styled.View({
   flexDirection: "row",
 });
 
-export const Overlay = styled.Pressable(({ theme }) => ({
-  backgroundColor: theme.colors.foreground,
+export const OverlayAnimationContainer = styled.View({
   bottom: 0,
   left: 0,
-  opacity: 0.6,
   position: "absolute",
   right: 0,
   top: 0,
+});
+
+export const Overlay = styled.Pressable(({ theme }) => ({
+  backgroundColor: theme.colors.foreground,
+  flex: 1,
+  opacity: 0.6,
 }));
+
+export const MenuAnimationContainer = styled.View({
+  flex: 1,
+  maxWidth: "75%",
+});
 
 export const MenuContainer = styled(ThemedView)(({ theme }) => ({
   backgroundColor: theme.colors.primary,
   borderBottomRightRadius: 40,
   flex: 1,
   justifyContent: "space-between",
-  maxWidth: "75%",
   paddingBottom: 40,
   paddingHorizontal: 32,
   paddingTop: 60,
