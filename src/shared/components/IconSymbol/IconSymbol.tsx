@@ -25,6 +25,7 @@ const MAPPING = {
   "heart.fill": "favorite",
   heart: "favorite-border",
   "star.fill": "star",
+  "arrow.left": "arrow-back",
   "line.3.horizontal": "menu",
   "bell.fill": "notifications",
   "questionmark.circle": "help-outline",
