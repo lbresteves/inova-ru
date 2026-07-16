@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MenuButton } from "@shared/components";
-import { useRouter } from "expo-router";
+import { type Href, useRouter } from "expo-router";
 import { Animated, Easing, Modal, useWindowDimensions } from "react-native";
 
 import {
@@ -68,6 +68,10 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
   ];
 
   function handleNavigation(route: string) {
+    if (route === "/settings") {
+      router.push("/settings" as Href);
+    }
+
     onClose();
   }
 
