@@ -13,28 +13,6 @@ export const Content = styled.View({
   paddingTop: 24,
 });
 
-export const Header = styled.View({
-  alignItems: "center",
-  flexDirection: "row",
-  gap: 10,
-});
-
-export const BackButton = styled.TouchableOpacity(({ theme }) => ({
-  alignItems: "center",
-  backgroundColor: theme.colors.primaryMuted,
-  borderRadius: 14,
-  height: 32,
-  justifyContent: "center",
-  width: 32,
-}));
-
-export const HeaderTitle = styled(ThemedText)(({ theme }) => ({
-  color: theme.colors.text,
-  fontSize: 17,
-  fontWeight: "700",
-  lineHeight: 24,
-}));
-
 export const Section = styled.View({
   gap: 16,
 });

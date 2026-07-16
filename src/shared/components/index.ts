@@ -1,6 +1,7 @@
 export * from "./BoxContent/BoxContent";
 export * from "./Collapsible/Collapsible";
 export * from "./HapticTab/HapticTab";
+export * from "./HeaderBack/HeaderBack";
 export * from "./AppInput/AppInput";
 export * from "./IconButton/IconButton";
 export * from "./IconSymbol/IconSymbol";

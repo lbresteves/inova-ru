@@ -1,6 +1,6 @@
 import {
   AppInput,
-  IconSymbol,
+  HeaderBack,
   SelectableBox,
   TimeWheelInput,
   Toggle,
@@ -10,11 +10,8 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 
 import {
-  BackButton,
   Container,
   Content,
-  Header,
-  HeaderTitle,
   NotificationSubsection,
   OptionRow,
   ScheduleLabel,
@@ -84,17 +81,7 @@ export function ConfigurationScreen() {
   return (
     <Container contentContainerStyle={{ flexGrow: 1 }}>
       <Content>
-        <Header>
-          <BackButton
-            accessibilityLabel="Voltar"
-            accessibilityRole="button"
-            activeOpacity={0.75}
-            onPress={() => router.back()}
-          >
-            <IconSymbol color="primary" name="arrow.left" size={18} />
-          </BackButton>
-          <HeaderTitle>Configurações</HeaderTitle>
-        </Header>
+        <HeaderBack title="Configurações" onReturnPress={() => router.back()} />
 
         <Section>
           <SectionTitle>Notificações</SectionTitle>
