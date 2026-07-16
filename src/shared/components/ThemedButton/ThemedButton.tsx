@@ -1,6 +1,4 @@
-import { Container } from "../PageBox/PageBox.styled";
 import { TouchableOpacity } from "react-native";
-import { ThemedText } from "../ThemedText/ThemedText";
 import { IconSymbol, IconSymbolName } from "../IconSymbol/IconSymbol";
 import { useTheme } from "@emotion/react";
 

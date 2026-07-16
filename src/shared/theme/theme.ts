@@ -1,4 +1,3 @@
-import { darkColorSchema } from "./darkColorSchema";
 import { lightColorSchema } from "./lightColorSchema";
 import { ThemeType, TTextStyle } from "./ThemeType";
 
