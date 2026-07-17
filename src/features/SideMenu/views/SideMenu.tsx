@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MenuButton } from "@shared/components";
-import { useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import { Animated, Easing, Modal, useWindowDimensions } from "react-native";
 
 import {
@@ -59,15 +59,16 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     outputRange: [-width * 0.75, 0],
   });
 
-  const menuOptions = [
-    { label: "Recarregar", route: "/recharge" },
-    { label: "Hist. de Recargas", route: "/recharge-history" },
-    { label: "Hist. de Refeições", route: "/meal-history" },
-    { label: "Cardápio", route: "/menu" },
-    { label: "Configurações", route: "/settings" },
+  const menuOptions: { label: string; route: RelativePathString }[] = [
+    { label: "Recarregar", route: "/main/recharge" as RelativePathString },
+    { label: "Hist. de Recargas", route: "/main/recharge-history" as RelativePathString },
+    { label: "Hist. de Refeições", route: "/main/meal-history" as RelativePathString },
+    { label: "Cardápio", route: "/main/menu" as RelativePathString },
+    { label: "Configurações", route: "/main/settings" as RelativePathString },
   ];
 
-  function handleNavigation(route: string) {
+  function handleNavigation(route: RelativePathString) {
+    router.replace(route)
     onClose();
   }
 

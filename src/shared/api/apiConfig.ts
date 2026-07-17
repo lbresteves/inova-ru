@@ -6,7 +6,7 @@ function resolveDefaultApiUrl(): string {
     : "http://localhost:3000";
 }
 
-const configuredUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
+const configuredUrl = "http://10.0.0.94:3000";
 
 export const apiConfig = {
   ruApiBaseUrl: (configuredUrl || resolveDefaultApiUrl()).replace(/\/$/, ""),
