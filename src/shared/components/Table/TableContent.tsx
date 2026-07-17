@@ -30,7 +30,6 @@ export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }
         const page = pageRef.current;
         
         try {
-            console.log("Fetching data for page:", page);
             const newData = await fetchData(page, filtersRef.current);
 
             if (newData.length > 0) {
@@ -60,13 +59,11 @@ export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }
     }, [fetchMoreData]);
 
     const handleLayout = (e: any) => {
-        console.log("handleLayout:");
         containerHeightRef.current = e.nativeEvent.layout.height;
         checkIfShouldFetchMore();
     };
 
     const handleContentSizeChange = (_width: number, height: number) => {
-        console.log("handleContentSizeChange:");
         contentHeightRef.current = height;
         checkIfShouldFetchMore();
     };
@@ -74,7 +71,6 @@ export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }
     // Sempre que os filtros mudarem (não importa o que há dentro deles),
     // os dados acumulados ficam inválidos: reinicia a paginação do zero.
     useEffect(() => {
-        console.log("Fetched:");
         filtersRef.current = filters;
         pageRef.current = 1;
         hasMoreRef.current = true;

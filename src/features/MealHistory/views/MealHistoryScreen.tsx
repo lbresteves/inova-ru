@@ -57,20 +57,17 @@ export default function HistoricoRecargasScreen() {
     const [ruPreset, setRuPreset] = useState("");
 
     const handlePeriodChange = (preset: number) => {
-        console.log("----------------------------------")
         setPeriodPreset(preset);
         var range = getPeriodRange(preset);
         if(range.dataFim && range.dataInicio)
             setFilters((f) => ({ ...f, ...range }));
         else
             setFilters((f) => ({ ...f, dataInicio: undefined, dataFim: undefined }));
-        console.log("filters:", filters)
     };
 
     const handleRuChange = (codigoRU: string) => {
         setRuPreset(codigoRU);
         setFilters((f) => ({ ...f, codigoRU }));
-        console.log("f: ", filters);
     };
 
     return (
