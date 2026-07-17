@@ -1,7 +1,8 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "../ThemedText/ThemedText";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { ThemedButton } from "../ThemedButton/ThemedButton";
+import { ThemedText } from "../ThemedText/ThemedText";
 import { Container, Row } from "./styles/HeaderBack.styled";
 
 export function HeaderBack({ title, onReturnPress }: { title: string; onReturnPress?: () => void }) {

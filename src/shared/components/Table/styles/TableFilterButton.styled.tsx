@@ -22,5 +22,5 @@ export const SelectLabel = styled.Text<{ active?: boolean }>(({ active, theme })
 }));
 
 export const SelectOption = styled.TouchableOpacity<{ active?: boolean }>(({ active, theme }) => ({
-    
+
 }));

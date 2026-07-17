@@ -30,6 +30,7 @@ const MAPPING = {
   "line.3.horizontal": "menu",
   "bell.fill": "notifications",
   "questionmark.circle": "help-outline",
+  "info.circle": "info-outline",
   eye: "visibility",
   "eye.slash": "visibility-off",
   "arrow.clockwise": "refresh",

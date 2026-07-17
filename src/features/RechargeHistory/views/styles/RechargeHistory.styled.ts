@@ -32,7 +32,7 @@ export const TableItem = styled.View(({ theme }) => ({
     alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 14,
-    borderRadius: 12, 
+    borderRadius: 12,
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: theme.colors.border,

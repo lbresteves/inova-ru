@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MenuButton } from "@shared/components";
-import { RelativePathString, useRouter } from "expo-router";
+import { type Href, useRouter } from "expo-router";
 import { Animated, Easing, Modal, useWindowDimensions } from "react-native";
 
 import {
@@ -25,6 +25,16 @@ export interface SideMenuProps {
   visible: boolean;
   onClose: () => void;
 }
+
+type MenuOption = {
+  label: string;
+  route?: Href;
+};
+
+const RECHARGE_ROUTE = "/main/recharge" as Href;
+const RECHARGE_HISTORY_ROUTE = "/main/recharge-history" as Href;
+const MEAL_HISTORY_ROUTE = "/main/meal-history" as Href;
+const SETTINGS_ROUTE = "/settings" as Href;
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter();
@@ -59,16 +69,19 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     outputRange: [-width * 0.75, 0],
   });
 
-  const menuOptions: { label: string; route: RelativePathString }[] = [
-    { label: "Recarregar", route: "/main/recharge" as RelativePathString },
-    { label: "Hist. de Recargas", route: "/main/recharge-history" as RelativePathString },
-    { label: "Hist. de Refeições", route: "/main/meal-history" as RelativePathString },
-    { label: "Cardápio", route: "/main/menu" as RelativePathString },
-    { label: "Configurações", route: "/main/settings" as RelativePathString },
+  const menuOptions: MenuOption[] = [
+    { label: "Recarregar", route: RECHARGE_ROUTE },
+    { label: "Hist. de Recargas", route: RECHARGE_HISTORY_ROUTE },
+    { label: "Hist. de Refeições", route: MEAL_HISTORY_ROUTE },
+    { label: "Cardápio" },
+    { label: "Configurações", route: SETTINGS_ROUTE },
   ];
 
-  function handleNavigation(route: RelativePathString) {
-    router.replace(route)
+  function handleNavigation(route?: Href) {
+    if (route) {
+      router.push(route);
+    }
+
     onClose();
   }
 

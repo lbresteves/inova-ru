@@ -22,7 +22,7 @@ function getPeriodRange(period: number) {
     switch(period) {
         case PERIOD_ALL: return {};
         case PERIOD_THIS_MONTH: {
-            var today = new Date();
+            const today = new Date();
             const first = new Date(today.getFullYear(), today.getMonth(), 1);
             return {
                 dataInicio: first.toISOString().split("T")[0],
@@ -30,13 +30,13 @@ function getPeriodRange(period: number) {
             };
         }
         case PERIOD_THIS_YEAR: {
-            var today = new Date();
+            const today = new Date();
             const first = new Date(today.getFullYear(), 0, 1);
             return {
                 dataInicio: first.toISOString().split("T")[0],
                 dataFim: today.toISOString().split("T")[0],
             };
-        } 
+        }
     }
     return {};
 }
@@ -48,10 +48,10 @@ export default function HistoricoRecargasScreen() {
 
     const handlePeriodChange = (preset: number) => {
         setPeriodPreset(preset);
-        var range = getPeriodRange(preset);
+        const range = getPeriodRange(preset);
         setFilters(range);
 
-        var selectedOption = PERIOD_OPTIONS.find(p => p.value === preset);
+        const selectedOption = PERIOD_OPTIONS.find(p => p.value === preset);
         if(selectedOption) {
             if(selectedOption.value === PERIOD_THIS_MONTH)
                 setThisMonthPreset(true);
@@ -76,22 +76,22 @@ export default function HistoricoRecargasScreen() {
         <HeaderBack title="Histórico de Recargas" onReturnPress={() => {router.replace("/main/home")}} />
         <Table>
             <TableHeader>
-                <TableFilterSelect 
-                    value={periodPreset} 
-                    defaultValue={PERIOD_ALL} 
-                    options={PERIOD_OPTIONS} 
-                    onChange={(period: number) => handlePeriodChange(period)} 
+                <TableFilterSelect
+                    value={periodPreset}
+                    defaultValue={PERIOD_ALL}
+                    options={PERIOD_OPTIONS}
+                    onChange={(period: number) => handlePeriodChange(period)}
                 />
-                <TableFilterButton 
-                    value={thisMonthPreset} 
-                    onChange={(thisMonth: boolean) => handleThisMonthToggle(thisMonth)} 
-                    title="Este mês" 
+                <TableFilterButton
+                    value={thisMonthPreset}
+                    onChange={(thisMonth: boolean) => handleThisMonthToggle(thisMonth)}
+                    title="Este mês"
                 />
             </TableHeader>
-            <TableContent 
+            <TableContent
                 filters={filters}
                 keyExtractor={(item) => `${item.id}`}
-                fetchData={fetchRecargas} 
+                fetchData={fetchRecargas}
                 renderItem={({item}) => (
                     <TableItem>
                         <ItemLeft>

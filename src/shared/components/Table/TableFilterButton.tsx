@@ -1,14 +1,17 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, FlatList } from "react-native";
 import { SelectLabel, SelectTouchable } from "./styles/TableFilterSelect.styled";
-import { IconSymbol } from "../IconSymbol/IconSymbol";
 
-export function TableFilterButton({ value, title, onChange }: { value: any; title: string; onChange: (v:any)=>void }) {
+type TableFilterButtonProps = {
+    value: boolean;
+    title: string;
+    onChange: (value: boolean) => void;
+};
+
+export function TableFilterButton({ value, title, onChange }: TableFilterButtonProps) {
 
     return (
         <>
-            <SelectTouchable onPress={() => onChange(!value)} active={false}>
-                <SelectLabel active={ false }>{title}</SelectLabel>
+            <SelectTouchable onPress={() => onChange(!value)} active={value}>
+                <SelectLabel active={value}>{title}</SelectLabel>
             </SelectTouchable>
         </>
     );

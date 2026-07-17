@@ -28,7 +28,7 @@ export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }
         setLoading(true);
 
         const page = pageRef.current;
-        
+
         try {
             const newData = await fetchData(page, filtersRef.current);
 
@@ -81,7 +81,7 @@ export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }
     }, [JSON.stringify(filters)]);
 
     return (
-        <FlatList 
+        <FlatList
             key={JSON.stringify(filters)}  // força remontagem a cada mudança de filtro
             style={{ flex: 1 }}
             contentContainerStyle={{ flexGrow: 1 }}
