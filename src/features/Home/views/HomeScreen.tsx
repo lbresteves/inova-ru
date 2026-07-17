@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRechargeBalanceQuery } from "@features/Recharge/hooks/useRechargeBalanceQuery";
 import { formatCurrency } from "@features/Recharge/utils/currency";
 import { IconSymbol } from "@shared/components";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
 import { HomeHeader } from "../HomeHeader";
 import {
@@ -26,6 +28,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const balanceQuery = useRechargeBalanceQuery();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -39,6 +42,7 @@ export default function HomeScreen() {
           name="João"
           status="Ativo"
           onMenuPress={() => setIsMenuOpen(true)}
+          onHelpPress={() => router.push("/about")}
         />
         <Content>
           <PrimaryAction

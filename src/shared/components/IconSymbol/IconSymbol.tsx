@@ -1,7 +1,7 @@
 // Fallback for using MaterialIcons on Android and web.
 
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTheme } from "@emotion/react";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { SFSymbol, SymbolWeight } from "expo-symbols";
 import type { ComponentProps } from "react";
 import { type StyleProp, type TextStyle } from "react-native";
@@ -18,6 +18,7 @@ type ThemeColorName = keyof ThemeType["colors"];
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
 const MAPPING = {
+  "chevron.down": "arrow-drop-down",
   "arrow.left": "arrow-back",
   "house.fill": "home",
   "paperplane.fill": "send",

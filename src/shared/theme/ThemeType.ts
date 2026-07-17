@@ -16,7 +16,13 @@ export type ColorsType = {
   transparent: string;
   shadow: string;
   returnBtnBackground: string;
-  returnIconColor: string;
+  activeIconColor: string;
+  unactiveIconColor: string;
+  titleColor: string;
+  statusApprovedBackgroundColor: string;
+  statusExpiredColor: string;
+  statusExpiredBackgroundColor: string;
+  filterActiveBorderColor: string,
 };
 
 export type TTextStyle = {
