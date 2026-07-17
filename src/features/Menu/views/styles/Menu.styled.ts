@@ -26,11 +26,6 @@ export const TableHeader = styled.View(({ theme }) => ({
 }));
 
 export const RUCard = styled.View(({ theme }) => ({
-  backgroundColor: theme.colors.background,
-  borderRadius: 12,
-  borderWidth: 1,
-  borderColor: theme.colors.border,
-  padding: 16,
   gap: 16,
 }));
 
@@ -60,4 +55,5 @@ export const DishChip = styled.Text(({ theme }) => ({
   fontSize: 13.5,
   fontWeight: "600",
   overflow: "hidden",
+  backgroundColor: theme.colors.background,
 }));

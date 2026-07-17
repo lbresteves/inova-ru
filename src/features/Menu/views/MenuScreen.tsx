@@ -16,7 +16,6 @@ const MEAL_OPTIONS = [
 const MEAL_LABELS: Record<string, string> = { almoco: "Almoço", jantar: "Jantar" };
 
 const RU_OPTIONS = [
-  { label: "Todos os RUs", value: "" },
   { label: "RU Saúde/Direito", value: "0001" },
   { label: "RU Setorial 2", value: "0002" },
   { label: "RU Setorial 1", value: "0003" },
@@ -34,9 +33,9 @@ const MENU_SECTIONS: {
 ];
 
 export default function MenuScreen() {
-  const [filters, setFilters] = useState<CardapioFilters>({ refeicao: "almoco" });
+  const [filters, setFilters] = useState<CardapioFilters>({ codigoRU: "0001", refeicao: "almoco" });
   const [mealPreset, setMealPreset] = useState("almoco");
-  const [ruPreset, setRuPreset] = useState("");
+  const [ruPreset, setRuPreset] = useState("0001");
   const [items, setItems] = useState<CardapioItem[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +66,7 @@ export default function MenuScreen() {
       <HeaderBack title="Cardápio" onReturnPress={() => router.replace("/main/home")} />
       <Table>
         <TableHeader>
-          <TableFilterSelect value={ruPreset} defaultValue="" options={RU_OPTIONS} onChange={handleRuChange} />
+          <TableFilterSelect value={ruPreset} defaultValue="0001" options={RU_OPTIONS} onChange={handleRuChange} />
           <TableFilterSelect value={mealPreset} defaultValue="almoco" options={MEAL_OPTIONS} onChange={handleMealChange} />
         </TableHeader>
 
