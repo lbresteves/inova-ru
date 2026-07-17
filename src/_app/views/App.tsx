@@ -1,4 +1,5 @@
 import { ThemeProvider as EmotionProvider } from "@emotion/react";
+import "@features/configurationScreen/tasks/balanceMonitorTask";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { configureNotificationHandler } from "@shared/notifications/configureNotificationHandler";
 import { darkColorSchema, lightColorSchema, theme } from "@shared/theme";

@@ -98,26 +98,26 @@ const CREDIT_REMINDER_WEEK_DAY_TRIGGER_MAP: Record<
   CreditReminderWeekDay,
   number
 > = {
-  friday: 6,
-  monday: 2,
-  saturday: 7,
   sunday: 1,
-  thursday: 5,
+  monday: 2,
   tuesday: 3,
   wednesday: 4,
+  thursday: 5,
+  friday: 6,
+  saturday: 7,
 };
 
 const CREDIT_REMINDER_NOTIFICATION_IDENTIFIERS: Record<
   CreditReminderWeekDay,
   string
 > = {
-  friday: "credit-reminder-friday",
-  monday: "credit-reminder-monday",
-  saturday: "credit-reminder-saturday",
   sunday: "credit-reminder-sunday",
-  thursday: "credit-reminder-thursday",
+  monday: "credit-reminder-monday",
   tuesday: "credit-reminder-tuesday",
   wednesday: "credit-reminder-wednesday",
+  thursday: "credit-reminder-thursday",
+  friday: "credit-reminder-friday",
+  saturday: "credit-reminder-saturday",
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
