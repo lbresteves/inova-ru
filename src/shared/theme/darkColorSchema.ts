@@ -14,7 +14,7 @@ export const darkColorSchema: ThemeType["colors"] = {
   danger: "#FDA29B",
   controlMuted: "#5C6B67",
   controlDisabled: "#45524F",
-  border: "#ffffffde",
+  border: "#86868653",
   shadow: "#000000",
   tabBarActiveTintColor: "#00aa9d",
   transparent: "transparent",
