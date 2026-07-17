@@ -4,22 +4,17 @@ import type { LoginRequestDto, LoginResponseDto } from "../types/LoginDto";
 import type { LoginForm } from "../types/LoginForm";
 import { mapLoginResponse } from "../utils/mapLoginResponse";
 
-const AUTH_ENDPOINTS = {
-  login: "/usuarios/login",
-} as const;
-
 export class AuthRepository {
   constructor(private readonly httpClient: IHttpClient) {}
 
   async login(form: LoginForm): Promise<AuthSession> {
-    const request: LoginRequestDto = {
-      password: form.password,
-      user: form.institutionalId,
-    };
     const response = await this.httpClient.post<
       LoginRequestDto,
       LoginResponseDto
-    >(AUTH_ENDPOINTS.login, request);
+    >("/usuarios/login", {
+      password: form.password,
+      user: form.institutionalId.trim(),
+    });
 
     return mapLoginResponse(response);
   }

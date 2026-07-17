@@ -3,8 +3,7 @@ import React from "react";
 import { Platform } from "react-native";
 
 import { useTheme } from "@emotion/react";
-import { HapticTab, IconSymbol } from "@shared/components";
-import Logo from "./Logo";
+import { HapticTab, IconSymbol, Logo } from "@shared/components";
 
 export default function TabLayout() {
   const theme = useTheme();

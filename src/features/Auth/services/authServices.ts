@@ -10,20 +10,17 @@ import { AuthSessionStorage } from "./AuthSessionStorage";
 export const authSessionStorage = new AuthSessionStorage(secureStorage);
 export const authRepository = new AuthRepository(ruApi);
 
-const authenticatedClient = new AuthenticatedHttpClient(
-  ruApi,
-  authSessionStorage,
-);
+async function clearSession(): Promise<void> {
+  try {
+    await authSessionStorage.removeAccessToken();
+  } finally {
+    useSessionStore.getState().setAnonymous();
+  }
+}
 
 export const authenticatedRuApi: IHttpClient = new UnauthorizedHttpClient(
-  authenticatedClient,
-  async () => {
-    useSessionStore.getState().setAnonymous();
-    await authSessionStorage.removeAccessToken();
-  },
+  new AuthenticatedHttpClient(ruApi, authSessionStorage),
+  clearSession,
 );
 
-export async function logout(): Promise<void> {
-  await authSessionStorage.removeAccessToken();
-  useSessionStore.getState().setAnonymous();
-}
+export const logout = clearSession;

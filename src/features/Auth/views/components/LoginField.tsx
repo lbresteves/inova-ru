@@ -1,16 +1,15 @@
 import styled from "@emotion/native";
 import { useTheme } from "@emotion/react";
 import { IconSymbol } from "@shared/components";
-import { fontFamilies } from "@shared/theme";
 import { useState } from "react";
 import type { TextInputProps } from "react-native";
 
 const Field = styled.View({ gap: 6 });
 const Label = styled.Text(({ theme }) => ({
   color: theme.colors.text,
-  fontFamily: fontFamilies.inter.semiBold,
-  fontSize: 14,
-  lineHeight: 20,
+  fontSize: theme.typography.inputLabel.fontSize,
+  fontWeight: theme.typography.inputLabel.fontWeight,
+  lineHeight: theme.typography.inputLabel.lineHeight,
 }));
 const InputContainer = styled.View<{
   $focused: boolean;
@@ -32,14 +31,15 @@ const InputContainer = styled.View<{
 const Input = styled.TextInput(({ theme }) => ({
   color: theme.colors.text,
   flex: 1,
-  fontFamily: fontFamilies.inter.regular,
-  fontSize: 16,
+  fontSize: theme.typography.inputText.fontSize,
+  fontWeight: theme.typography.inputText.fontWeight,
+  lineHeight: theme.typography.inputText.lineHeight,
   paddingVertical: 12,
 }));
 const ErrorText = styled.Text(({ theme }) => ({
   color: theme.colors.danger,
-  fontFamily: fontFamilies.inter.regular,
   fontSize: 12,
+  fontWeight: theme.typography.default.fontWeight,
   lineHeight: 16,
 }));
 const VisibilityButton = styled.Pressable({

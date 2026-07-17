@@ -3,6 +3,7 @@ export * from "./Collapsible/Collapsible";
 export * from "./HapticTab/HapticTab";
 export * from "./IconButton/IconButton";
 export * from "./IconSymbol/IconSymbol";
+export * from "./Logo/Logo";
 export * from "./MenuButton/MenuButton";
 export * from "./PageBox/PageBox";
 export * from "./StatusBadge/StatusBadge";

@@ -1,6 +1,7 @@
-import { ApiError } from "@shared/api/ApiError";
+import { ApiError } from "@shared/api";
+import { Logo } from "@shared/components";
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Platform } from "react-native";
 import { useLoginMutation } from "../hooks/useLoginMutation";
 import type { LoginForm } from "../types/LoginForm";
@@ -10,7 +11,6 @@ import {
 } from "../utils/loginValidation";
 import { LoginButton } from "./components/LoginButton";
 import { LoginField } from "./components/LoginField";
-import { RuMark } from "./components/RuMark";
 import {
   BrandBlock,
   Form,
@@ -24,7 +24,7 @@ import {
   Subtitle,
 } from "./styles/LoginScreen.styled";
 
-const initialForm: LoginForm = {
+const INITIAL_FORM: LoginForm = {
   institutionalId: "",
   password: "",
 };
@@ -32,24 +32,29 @@ const initialForm: LoginForm = {
 export default function LoginScreen() {
   const router = useRouter();
   const loginMutation = useLoginMutation();
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState<LoginErrors>({});
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const canSubmit = useMemo(
-    () => Boolean(form.institutionalId.trim() && form.password.trim()),
-    [form],
+
+  const canSubmit = Boolean(
+    form.institutionalId.trim() && form.password.trim(),
   );
 
   async function submit() {
+    if (loginMutation.isPending) {
+      return;
+    }
+
     const nextErrors = validateLogin(form);
     setErrors(nextErrors);
+
     if (Object.keys(nextErrors).length > 0) {
       return;
     }
 
     try {
       await loginMutation.mutateAsync(form);
-      setForm((current) => ({ ...current, password: "" }));
+      setForm(INITIAL_FORM);
       router.replace("/main/home");
     } catch {
       // The mutation error is rendered below the fields.
@@ -72,7 +77,7 @@ export default function LoginScreen() {
         >
           <LoginContent>
             <BrandBlock>
-              <RuMark size={52} />
+              <Logo size={52} style={{ marginHorizontal: 0 }} />
               <ScreenTitle>Entrar</ScreenTitle>
               <Subtitle>Acesse com seus dados institucionais</Subtitle>
             </BrandBlock>
@@ -127,7 +132,7 @@ export default function LoginScreen() {
 
             <Spacer />
             <LoginButton
-              disabled={!canSubmit}
+              disabled={!canSubmit || loginMutation.isPending}
               loading={loginMutation.isPending}
               onPress={() => void submit()}
             />

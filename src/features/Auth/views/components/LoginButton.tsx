@@ -1,5 +1,4 @@
 import styled from "@emotion/native";
-import { fontFamilies } from "@shared/theme";
 import { ActivityIndicator } from "react-native";
 
 const Button = styled.Pressable<{ $disabled: boolean }>(
@@ -15,9 +14,9 @@ const Button = styled.Pressable<{ $disabled: boolean }>(
 );
 const ButtonText = styled.Text(({ theme }) => ({
   color: theme.colors.onPrimary,
-  fontFamily: fontFamilies.inter.bold,
-  fontSize: 16,
-  lineHeight: 22,
+  fontSize: theme.typography.btnText.fontSize,
+  fontWeight: theme.typography.btnText.fontWeight,
+  lineHeight: theme.typography.btnText.lineHeight,
 }));
 
 type LoginButtonProps = {
@@ -40,7 +39,11 @@ export function LoginButton({
       disabled={isDisabled}
       onPress={onPress}
     >
-      {loading ? <ActivityIndicator color="#FFFFFF" /> : <ButtonText>Entrar</ButtonText>}
+      {loading ? (
+        <ActivityIndicator color="#FFFFFF" />
+      ) : (
+        <ButtonText>Entrar</ButtonText>
+      )}
     </Button>
   );
 }
