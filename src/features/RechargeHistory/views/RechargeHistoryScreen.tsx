@@ -1,17 +1,11 @@
 import { HeaderBack } from "@/src/shared/components/HeaderBack/HeaderBack";
 import { Container, ItemLeft, ItemLeftSub, ItemLeftTitle, ItemStatusApproved, ItemStatusExpired, Table, TableHeader, TableItem } from "./styles/RechargeHistory.styled";
 import { TableContent } from "@/src/shared/components/Table/TableContent";
-import { mock } from "../utils/mock";
 import { formatDateTime, formatCurrency, formatStatus } from "../utils/TextFormat";
 import { TableFilterSelect } from "@/src/shared/components/Table/TableFilterSelect";
 import { TableFilterButton } from "@/src/shared/components/Table/TableFilterButton";
 import React, { useState } from "react";
-
-// ISO date, ex: "2026-07-01"
-interface RecargaFilters {
-    dataInicio?: string,
-    dataFim?: string
-}
+import { fetchRecargas, RecargaFilters } from "../utils/FecthRecargas";
 
 const PERIOD_ALL = 0;
 const PERIOD_THIS_MONTH = 1;
@@ -46,39 +40,6 @@ function getPeriodRange(period: number) {
     return {};
 }
 
-// "achata" todas as páginas mockadas num único dataset —
-// simula o banco de dados completo que uma API de verdade consultaria
-export const allMockItems = mock.flatMap((page) => page.data);
-
-export const MOCK_PAGE_SIZE = 5; // mesmo tamanho de página que seu mock já usa
-
-function parseLocalDate(dateStr: string) {
-  const [y, m, d] = dateStr.split("-").map(Number);
-  return new Date(y, m - 1, d); // cria meia-noite LOCAL
-}
-
-// fetchData agora recebe os filtros e é quem sabe aplicá-los.
-// Hoje filtra o mock; no futuro, filtra a leitura do cache local
-// e dispara/mescla o request de atualização à API com os mesmos critérios.
-async function fetchRecargas(page: number, filters: RecargaFilters) {
-    if(filters.dataInicio && filters.dataFim) {
-    }const filtered = allMockItems.filter((item) => {
-        if(filters.dataInicio && filters.dataFim) {
-            const itemDate = new Date(item.data_hora);;
-            const start = parseLocalDate(filters.dataInicio);
-            const end = parseLocalDate(filters.dataFim);
-            start.setHours(0, 0, 0, 0); // inclui o exato inicio da dataInicio
-            end.setHours(23, 59, 59, 999); // inclui o dia inteiro de dataFim
-            return itemDate >= start && itemDate <= end;
-        }
-        return true;
-    });
-
-    const start = (page - 1) * MOCK_PAGE_SIZE;
-    const end = start + MOCK_PAGE_SIZE;
-    return filtered.slice(start, end);
-}
-
 export default function HistoricoRecargasScreen() {
     const [filters, setFilters] = useState<RecargaFilters>({});
     const [periodPreset, setPeriodPreset] = useState(PERIOD_ALL);
@@ -100,7 +61,6 @@ export default function HistoricoRecargasScreen() {
 
     const handleThisMonthToggle = (active: boolean) => {
         if (active) {
-            // seta para Este mês
             setPeriodPreset(PERIOD_THIS_MONTH);
             setFilters(getPeriodRange(PERIOD_THIS_MONTH));
         } else {
