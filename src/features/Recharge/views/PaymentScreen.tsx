@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { useTheme } from "@emotion/react";
 import { useQueryClient } from "@tanstack/react-query";
-
-import { AppButton, HeaderBack, IconButton } from "@shared/components";
+import { AppButton, HeaderBack, IconSymbol } from "@shared/components";
 import { usePaymentCountdown } from "../hooks/usePaymentCountdown";
 import { usePaymentStatusQuery } from "../hooks/usePaymentStatusQuery";
 import { useRechargeBalanceQuery } from "../hooks/useRechargeBalanceQuery";
@@ -189,9 +188,9 @@ export default function PaymentScreen() {
 
           <QrCard>
             {payment.qrCodeUri ? (
-              <QrImage
-                resizeMode="contain"
-                source={{ uri: payment.qrCodeUri }}
+              <PaymentQrCode
+                color={theme.colors.primary}
+                qrCodeUri={payment.qrCodeUri}
               />
             ) : (
               <QrUnavailable>
@@ -206,12 +205,9 @@ export default function PaymentScreen() {
             <CodeText numberOfLines={1}>
               {payment.copyPasteCode}
             </CodeText>
-            <IconButton
-              color="primary"
-              name="doc.on.doc"
-              onPress={() => void copyPaymentCode()}
-              size={20}
-            />
+            <CopyButton onPress={() => void copyPaymentCode()}>
+              <IconSymbol color="primary" name="doc.on.doc" size={20} />
+            </CopyButton>
           </CodeBox>
           {copyFeedback ? <CopyFeedback>{copyFeedback}</CopyFeedback> : null}
           <WaitingCard>

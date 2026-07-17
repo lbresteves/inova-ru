@@ -84,6 +84,13 @@ export const CopyButton = styled.TouchableOpacity({
   padding: 8,
 });
 
+export const CopyFeedback = styled(ThemedText)(({ theme }) => ({
+  color: theme.colors.primary,
+  fontSize: 12,
+  lineHeight: 16,
+  marginTop: 6,
+}));
+
 export const WaitingCard = styled.View(({ theme }) => ({
   alignItems: "center",
   alignSelf: "center",
