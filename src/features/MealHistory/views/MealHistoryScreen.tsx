@@ -1,11 +1,12 @@
 import { HeaderBack } from "@/src/shared/components/HeaderBack/HeaderBack";
-import { Container, ItemLeft, ItemLeftSub, ItemLeftTitle, ItemStatusApproved, ItemStatusExpired, Table, TableHeader, TableItem } from "./styles/RechargeHistory.styled";
+import { Container, ItemLeft, ItemLeftSub, ItemLeftTitle, ItemStatusFree, ItemStatusNotFree, Table, TableHeader, TableItem } from "./styles/MealHistory.styled";
 import { TableContent } from "@/src/shared/components/Table/TableContent";
-import { formatDateTime, formatCurrency, formatStatus } from "../utils/TextFormat";
+import { formatCurrency, formatStatus, formatDate, formatTime } from "../utils/TextFormat";
 import { TableFilterSelect } from "@/src/shared/components/Table/TableFilterSelect";
 import { TableFilterButton } from "@/src/shared/components/Table/TableFilterButton";
 import React, { useState } from "react";
 import { fetchRecargas, RecargaFilters } from "../utils/FecthRecargas";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 const PERIOD_ALL = 0;
@@ -16,6 +17,15 @@ const PERIOD_OPTIONS = [
     { label: "Período", value: PERIOD_ALL},
     { label: "Este mês", value: PERIOD_THIS_MONTH},
     { label: "Este ano", value: PERIOD_THIS_YEAR},
+];
+
+const RU_OPTIONS = [
+    { label: "Todos os RUs", value: ""},
+    { label: "RU Saúde/Direito", value: "0001"},
+    { label: "RU Setorial 2", value: "0002"},
+    { label: "RU Setorial 1", value: "0003"},
+    { label: "RU ICA", value: "0004"},
+    { label: "RU HRTN", value: "0005"},
 ];
 
 function getPeriodRange(period: number) {
@@ -44,36 +54,26 @@ function getPeriodRange(period: number) {
 export default function HistoricoRecargasScreen() {
     const [filters, setFilters] = useState<RecargaFilters>({});
     const [periodPreset, setPeriodPreset] = useState(PERIOD_ALL);
-    const [thisMonthPreset, setThisMonthPreset] = useState(false);
+    const [ruPreset, setRuPreset] = useState("");
 
     const handlePeriodChange = (preset: number) => {
         setPeriodPreset(preset);
         var range = getPeriodRange(preset);
-        setFilters(range);
-
-        var selectedOption = PERIOD_OPTIONS.find(p => p.value === preset);
-        if(selectedOption) {
-            if(selectedOption.value === PERIOD_THIS_MONTH)
-                setThisMonthPreset(true);
-            else
-                setThisMonthPreset(false);
-        }
+        if(range.dataFim && range.dataInicio)
+            setFilters((f) => ({ ...f, ...range }));
+        else
+            setFilters((f) => ({ ...f, dataInicio: undefined, dataFim: undefined }));
     };
 
-    const handleThisMonthToggle = (active: boolean) => {
-        if (active) {
-            setPeriodPreset(PERIOD_THIS_MONTH);
-            setFilters(getPeriodRange(PERIOD_THIS_MONTH));
-        } else {
-            setPeriodPreset(PERIOD_ALL);
-            setFilters({});
-        }
+    const handleRuChange = (codigoRU: string) => {
+        setRuPreset(codigoRU);
+        setFilters((f) => ({ ...f, codigoRU }));
     };
 
     return (
     <>
     <Container>
-        <HeaderBack title="Histórico de Recargas" onReturnPress={() => {router.replace("/main/home")}} />
+        <HeaderBack title="Histórico de Refeições" onReturnPress={() => {router.replace("/main/home")}} />
         <Table>
             <TableHeader>
                 <TableFilterSelect 
@@ -81,27 +81,27 @@ export default function HistoricoRecargasScreen() {
                     defaultValue={PERIOD_ALL} 
                     options={PERIOD_OPTIONS} 
                     onChange={(period: number) => handlePeriodChange(period)} 
-                />
-                <TableFilterButton 
-                    value={thisMonthPreset} 
-                    onChange={(thisMonth: boolean) => handleThisMonthToggle(thisMonth)} 
-                    title="Este mês" 
-                />
+                    />
+                <TableFilterSelect 
+                    value={ruPreset} 
+                    defaultValue=""
+                    options={RU_OPTIONS} 
+                    onChange={(ru: string) => handleRuChange(ru)} 
+                    />
             </TableHeader>
             <TableContent 
                 filters={filters}
-                keyExtractor={(item) => `${item.id}`}
                 fetchData={fetchRecargas} 
                 renderItem={({item}) => (
                     <TableItem>
                         <ItemLeft>
-                            <ItemLeftTitle>{formatCurrency(item.valor)}</ItemLeftTitle>
-                            <ItemLeftSub>{item.metodo.toUpperCase()} · {formatDateTime(item.data_hora)}</ItemLeftSub>
+                            <ItemLeftTitle>{RU_OPTIONS.find(ru => ru.value === item.filial.codigo)?.label}</ItemLeftTitle>
+                            <ItemLeftSub>{formatDate(item.data_hora)} · {formatTime(item.data_hora)}</ItemLeftSub>
                         </ItemLeft>
-                        {item.status === "aprovado" ? (
-                            <ItemStatusApproved>{formatStatus(item.status)}</ItemStatusApproved>
+                        {item.gratuidade ? (
+                            <ItemStatusFree>Gratuita</ItemStatusFree>
                         ) : (
-                            <ItemStatusExpired>{formatStatus(item.status)}</ItemStatusExpired>
+                            <ItemStatusNotFree>{formatCurrency(item.valor_total)}</ItemStatusNotFree>
                         )}
                     </TableItem>
                 )}
