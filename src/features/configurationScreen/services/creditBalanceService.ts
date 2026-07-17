@@ -1,6 +1,15 @@
-const MOCK_CURRENT_CREDIT_BALANCE = 45.5;
+import { authenticatedRuApi } from "@features/Auth";
+
+type CreditBalanceResponseDto = {
+  saldo: {
+    credito_disponivel: number;
+  };
+};
 
 export async function fetchCurrentCreditBalanceAsync(): Promise<number> {
-  // Replace this mock with the real balance request when the endpoint is available.
-  return MOCK_CURRENT_CREDIT_BALANCE;
+  const response = await authenticatedRuApi.get<CreditBalanceResponseDto>(
+    "/creditos/saldo",
+  );
+
+  return Number(response.saldo.credito_disponivel);
 }

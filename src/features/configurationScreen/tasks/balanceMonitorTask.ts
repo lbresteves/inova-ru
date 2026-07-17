@@ -9,7 +9,7 @@ import { fetchCurrentCreditBalanceAsync } from "../services/creditBalanceService
 import { getLowBalanceNotificationMessage } from "../utils/balanceMonitorNotificationMessages";
 
 export const BALANCE_MONITOR_TASK_NAME = "credit-balance-monitor";
-export const BALANCE_MONITOR_MINIMUM_INTERVAL_MINUTES = 4 * 60;
+export const BALANCE_MONITOR_MINIMUM_INTERVAL_MINUTES = 1;
 
 const BALANCE_MONITOR_STORAGE_KEY =
   "@inova-ru:balance-monitor-notifications";
@@ -239,6 +239,15 @@ async function scheduleLowBalanceNotificationAsync(
   });
 }
 
+function logBalanceMonitorTaskDebug(
+  message: string,
+  data?: Record<string, unknown>
+): void {
+  if (__DEV__) {
+    console.log("[balance-monitor]", message, data ?? "");
+  }
+}
+
 export async function isBalanceMonitorTaskRegisteredAsync(): Promise<boolean> {
   if (!(await TaskManager.isAvailableAsync())) {
     return false;
@@ -290,20 +299,42 @@ export async function unregisterBalanceMonitorTaskAsync(): Promise<void> {
 }
 
 export async function triggerBalanceMonitorTaskForTestingAsync(): Promise<boolean> {
+  if (__DEV__) {
+    const result = await runBalanceMonitorTaskAsync({
+      ignoreDailyThrottle: true,
+    });
+
+    return result === BackgroundTask.BackgroundTaskResult.Success;
+  }
+
   return await BackgroundTask.triggerTaskWorkerForTestingAsync();
 }
 
-async function runBalanceMonitorTaskAsync(): Promise<BackgroundTask.BackgroundTaskResult> {
+async function runBalanceMonitorTaskAsync({
+  ignoreDailyThrottle = false,
+}: {
+  ignoreDailyThrottle?: boolean;
+} = {}): Promise<BackgroundTask.BackgroundTaskResult> {
   try {
     const configuration = await loadStoredBalanceMonitorConfigurationAsync();
+    logBalanceMonitorTaskDebug("Task started.", {
+      enabled: configuration.enabled,
+      ignoreDailyThrottle,
+      minimumBalance: configuration.minimumBalance,
+    });
 
     if (!configuration.enabled) {
+      logBalanceMonitorTaskDebug("Skipped: balance monitor is disabled.");
       return BackgroundTask.BackgroundTaskResult.Success;
     }
 
     const currentBalance = await fetchCurrentCreditBalanceAsync();
 
     if (currentBalance >= configuration.minimumBalance) {
+      logBalanceMonitorTaskDebug("Skipped: current balance is above minimum.", {
+        currentBalance,
+        minimumBalance: configuration.minimumBalance,
+      });
       return BackgroundTask.BackgroundTaskResult.Success;
     }
 
@@ -311,7 +342,10 @@ async function runBalanceMonitorTaskAsync(): Promise<BackgroundTask.BackgroundTa
     const lastNotificationDate =
       await loadLastLowBalanceNotificationDateAsync();
 
-    if (lastNotificationDate === todayKey) {
+    if (!ignoreDailyThrottle && lastNotificationDate === todayKey) {
+      logBalanceMonitorTaskDebug("Skipped: notification already sent today.", {
+        todayKey,
+      });
       return BackgroundTask.BackgroundTaskResult.Success;
     }
 
@@ -320,6 +354,10 @@ async function runBalanceMonitorTaskAsync(): Promise<BackgroundTask.BackgroundTa
       configuration.minimumBalance
     );
     await persistLastLowBalanceNotificationDateAsync(todayKey);
+    logBalanceMonitorTaskDebug("Notification scheduled.", {
+      currentBalance,
+      minimumBalance: configuration.minimumBalance,
+    });
 
     return BackgroundTask.BackgroundTaskResult.Success;
   } catch (error: unknown) {
@@ -329,5 +367,7 @@ async function runBalanceMonitorTaskAsync(): Promise<BackgroundTask.BackgroundTa
 }
 
 if (!TaskManager.isTaskDefined(BALANCE_MONITOR_TASK_NAME)) {
-  TaskManager.defineTask(BALANCE_MONITOR_TASK_NAME, runBalanceMonitorTaskAsync);
+  TaskManager.defineTask(BALANCE_MONITOR_TASK_NAME, () =>
+    runBalanceMonitorTaskAsync()
+  );
 }
