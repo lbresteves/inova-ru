@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { useTheme } from "@emotion/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { AppButton, HeaderBack, IconSymbol } from "@shared/components";
+
+import { AppButton, HeaderBack, IconButton } from "@shared/components";
 import { usePaymentCountdown } from "../hooks/usePaymentCountdown";
 import { usePaymentStatusQuery } from "../hooks/usePaymentStatusQuery";
 import { useRechargeBalanceQuery } from "../hooks/useRechargeBalanceQuery";
@@ -106,7 +107,6 @@ export default function PaymentScreen() {
     const timeout = setTimeout(() => setCopyFeedback(undefined), 2_000);
     return () => clearTimeout(timeout);
   }, [copyFeedback]);
-
   const creditedBalance = balanceQuery.data?.current;
 
   async function copyPaymentCode() {
@@ -189,9 +189,11 @@ export default function PaymentScreen() {
 
           <QrCard>
             {payment.qrCodeUri ? (
-              <PaymentQrCode
-                color={theme.colors.primary}
-                qrCodeUri={payment.qrCodeUri}
+              <QrImage
+                accessibilityIgnoresInvertColors
+                accessibilityLabel="QR Code para pagamento"
+                resizeMode="contain"
+                source={{ uri: payment.qrCodeUri }}
               />
             ) : (
               <QrUnavailable>
@@ -203,15 +205,22 @@ export default function PaymentScreen() {
           <AmountText>{formatCurrency(payment.amount)}</AmountText>
 
           <CodeBox>
-            <CodeText numberOfLines={1}>
+            <CodeText numberOfLines={1} selectable>
               {payment.copyPasteCode}
             </CodeText>
-            <CopyButton onPress={() => void copyPaymentCode()}>
-              <IconSymbol color="primary" name="doc.on.doc" size={20} />
-            </CopyButton>
+            <IconButton
+              accessibilityLabel="Copiar código de pagamento"
+              color="primary"
+              name="doc.on.doc"
+              onPress={() => void copyPaymentCode()}
+              size={20}
+            />
           </CodeBox>
-          {copyFeedback ? <CopyFeedback>{copyFeedback}</CopyFeedback> : null}
-
+          {copyFeedback ? (
+            <CopyFeedback accessibilityLiveRegion="polite">
+              {copyFeedback}
+            </CopyFeedback>
+          ) : null}
           <WaitingCard>
             <ActivityIndicator color={theme.colors.primary} size="small" />
             <WaitingTexts>

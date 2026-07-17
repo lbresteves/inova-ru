@@ -140,9 +140,7 @@ export default function RechargeScreen() {
           ) : (
             <BalanceText>Consultando saldo atual...</BalanceText>
           )}
-
           {requestError ? <ErrorText>{requestError}</ErrorText> : null}
-
           <ButtonArea>
             <AppButton
               disabled={Boolean(validationError) || !balanceQuery.data}
