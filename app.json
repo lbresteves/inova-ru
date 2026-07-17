@@ -17,6 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
+      "permissions": ["android.permission.SCHEDULE_EXACT_ALARM"],
       "package": "com.lbresteves.inovaruapp"
     },
     "web": {
@@ -56,6 +57,6 @@
         "projectId": "26c1bfcc-13ab-4108-a965-bd6b6a366a2b"
       }
     },
-    "owner": "lbresteves"
+    "owner": "lbrestevess"
   }
 }

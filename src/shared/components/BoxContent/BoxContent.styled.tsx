@@ -14,7 +14,9 @@ export interface IBoxProps {
 }
 export const Box = styled.View<IBoxProps>((props) => ({
   width: "100%",
-  backgroundColor: props.bg ? props.theme.colors[props.bg] : "transparent",
+  backgroundColor: props.bg
+    ? props.theme.colors?.[props.bg] ?? "transparent"
+    : "transparent",
   flex: props.flex || 1,
   flexDirection: props.flexDirection || "column",
   justifyContent: props.centerVertical ? "center" : "flex-start",

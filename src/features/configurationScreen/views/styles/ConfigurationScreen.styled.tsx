@@ -68,3 +68,37 @@ export const ScheduleLabel = styled(ThemedText)(({ theme }) => ({
   fontWeight: "700",
   lineHeight: 20,
 }));
+
+export const NotificationNotice = styled.View(({ theme }) => ({
+  backgroundColor: theme.colors.primaryMuted,
+  borderColor: theme.colors.primary,
+  borderRadius: 8,
+  borderWidth: 1,
+  gap: 8,
+  padding: 12,
+}));
+
+export const NotificationNoticeText = styled(ThemedText)(({ theme }) => ({
+  color: theme.colors.primary,
+  fontSize: 13,
+  fontWeight: "600",
+  lineHeight: 18,
+}));
+
+export const NotificationNoticeButton = styled.Pressable<{
+  disabled?: boolean;
+}>(({ disabled, theme }) => ({
+  alignSelf: "flex-start",
+  backgroundColor: theme.colors.primary,
+  borderRadius: 8,
+  opacity: disabled ? 0.56 : 1,
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+}));
+
+export const NotificationNoticeButtonText = styled(ThemedText)(({ theme }) => ({
+  color: theme.colors.onPrimary,
+  fontSize: 13,
+  fontWeight: "700",
+  lineHeight: 18,
+}));

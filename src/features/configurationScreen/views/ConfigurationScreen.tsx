@@ -10,8 +10,16 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 
 import {
+  type CreditReminderWeekDay,
+  useCreditReminderNotifications,
+} from "../hooks/useCreditReminderNotifications";
+import {
   Container,
   Content,
+  NotificationNotice,
+  NotificationNoticeButton,
+  NotificationNoticeButtonText,
+  NotificationNoticeText,
   NotificationSubsection,
   OptionRow,
   ScheduleLabel,
@@ -23,9 +31,15 @@ import {
   WeekDayRow,
 } from "./styles/ConfigurationScreen.styled";
 
-const amountOptions = [10, 20, 50, 100];
+const amountOptions: number[] = [10, 20, 50, 100];
 
-const weekDays = [
+interface WeekDayOption {
+  accessibilityLabel: string;
+  label: string;
+  value: CreditReminderWeekDay;
+}
+
+const weekDays: WeekDayOption[] = [
   { accessibilityLabel: "domingo", label: "D", value: "sunday" },
   { accessibilityLabel: "segunda-feira", label: "S", value: "monday" },
   { accessibilityLabel: "terça-feira", label: "T", value: "tuesday" },
@@ -35,47 +49,98 @@ const weekDays = [
   { accessibilityLabel: "sábado", label: "S", value: "saturday" },
 ];
 
-function formatCurrencyInput(value: number) {
+function formatCurrencyInput(value: number): string {
   return `R$ ${value.toFixed(2).replace(".", ",")}`;
 }
 
-function formatAmountOption(value: number) {
+function formatAmountOption(value: number): string {
   return `R$ ${value}`;
 }
 
 export function ConfigurationScreen() {
   const router = useRouter();
+  const {
+    canAskPermissionAgain,
+    configuration: creditReminderConfiguration,
+    isLoading: isCreditReminderLoading,
+    isSaving: isCreditReminderSaving,
+    openNotificationSettings,
+    permissionStatus,
+    retryPermissionRequest,
+    syncStatus,
+    updateEnabled: updateCreditReminderEnabled,
+    updateTime: updateCreditReminderTime,
+    updateWeekDays: updateCreditReminderWeekDays,
+  } = useCreditReminderNotifications();
   const [generalNotificationsEnabled, setGeneralNotificationsEnabled] =
-    useState(true);
+    useState<boolean>(true);
   const [balanceNotificationEnabled, setBalanceNotificationEnabled] =
-    useState(false);
-  const [selectedAmount, setSelectedAmount] = useState(50);
-  const [customAmount, setCustomAmount] = useState(formatCurrencyInput(50));
-  const [weeklyNotificationEnabled, setWeeklyNotificationEnabled] =
-    useState(true);
-  const [selectedWeekDays, setSelectedWeekDays] = useState<string[]>([]);
-  const [notificationTime, setNotificationTime] = useState<TimeWheelValue>({
-    hour: 10,
-    minute: 30,
-  });
+    useState<boolean>(false);
+  const [selectedAmount, setSelectedAmount] = useState<number>(50);
+  const [customAmount, setCustomAmount] = useState<string>(
+    formatCurrencyInput(50)
+  );
 
-  function handleAmountPress(value: number) {
+  const weeklyReminderDisabled =
+    !generalNotificationsEnabled || isCreditReminderLoading;
+  const weeklyReminderControlsDisabled =
+    weeklyReminderDisabled || !creditReminderConfiguration.enabled;
+  const shouldShowPermissionNotice =
+    generalNotificationsEnabled &&
+    creditReminderConfiguration.enabled &&
+    permissionStatus === "denied";
+  const shouldShowScheduleErrorNotice =
+    generalNotificationsEnabled &&
+    creditReminderConfiguration.enabled &&
+    syncStatus === "schedule-error";
+  const shouldShowStorageErrorNotice = syncStatus === "storage-error";
+  const permissionNoticeText = canAskPermissionAgain
+    ? "Permissão de notificação negada. Tente novamente para agendar seus lembretes."
+    : "Permissão de notificação bloqueada. Ative as notificações nas configurações do app.";
+  const permissionNoticeActionText = canAskPermissionAgain
+    ? "Tentar novamente"
+    : "Abrir configurações";
+
+  function handleAmountPress(value: number): void {
     setSelectedAmount(value);
     setCustomAmount(formatCurrencyInput(value));
   }
 
-  function handleCustomAmountChange(value: string) {
+  function handleCustomAmountChange(value: string): void {
     setSelectedAmount(0);
     setCustomAmount(value);
   }
 
-  function handleGeneralNotificationsChange(value: boolean) {
+  function handleGeneralNotificationsChange(value: boolean): void {
     setGeneralNotificationsEnabled(value);
 
     if (!value) {
       setBalanceNotificationEnabled(false);
-      setWeeklyNotificationEnabled(false);
+      void updateCreditReminderEnabled(false);
     }
+  }
+
+  function handleCreditReminderEnabledChange(value: boolean): void {
+    void updateCreditReminderEnabled(value);
+  }
+
+  function handleCreditReminderWeekDaysChange(
+    values: CreditReminderWeekDay[]
+  ): void {
+    void updateCreditReminderWeekDays(values);
+  }
+
+  function handleCreditReminderTimeChange(value: TimeWheelValue): void {
+    void updateCreditReminderTime(value);
+  }
+
+  function handleNotificationPermissionActionPress(): void {
+    if (canAskPermissionAgain) {
+      void retryPermissionRequest();
+      return;
+    }
+
+    void openNotificationSettings();
   }
 
   return (
@@ -134,24 +199,59 @@ export function ConfigurationScreen() {
             <SettingRow>
               <Toggle
                 accessibilityLabel="Notificar semanalmente"
-                disabled={!generalNotificationsEnabled}
-                value={weeklyNotificationEnabled}
-                onValueChange={setWeeklyNotificationEnabled}
+                disabled={weeklyReminderDisabled}
+                value={creditReminderConfiguration.enabled}
+                onValueChange={handleCreditReminderEnabledChange}
               />
               <SettingLabel>Notificar semanalmente</SettingLabel>
             </SettingRow>
+
+            {shouldShowPermissionNotice ? (
+              <NotificationNotice accessibilityRole="alert">
+                <NotificationNoticeText>
+                  {permissionNoticeText}
+                </NotificationNoticeText>
+                <NotificationNoticeButton
+                  accessibilityLabel={permissionNoticeActionText}
+                  accessibilityRole="button"
+                  disabled={isCreditReminderSaving}
+                  onPress={handleNotificationPermissionActionPress}
+                >
+                  <NotificationNoticeButtonText>
+                    {permissionNoticeActionText}
+                  </NotificationNoticeButtonText>
+                </NotificationNoticeButton>
+              </NotificationNotice>
+            ) : null}
+
+            {shouldShowScheduleErrorNotice ? (
+              <NotificationNotice accessibilityRole="alert">
+                <NotificationNoticeText>
+                  Não foi possível agendar o lembrete. Verifique as permissões
+                  do app e tente novamente.
+                </NotificationNoticeText>
+              </NotificationNotice>
+            ) : null}
+
+            {shouldShowStorageErrorNotice ? (
+              <NotificationNotice accessibilityRole="alert">
+                <NotificationNoticeText>
+                  Não foi possível carregar sua configuração de lembrete.
+                </NotificationNoticeText>
+              </NotificationNotice>
+            ) : null}
 
             <WeekDayRow>
               {weekDays.map((day) => (
                 <SelectableBox
                   key={day.value}
                   accessibilityLabel={`Selecionar ${day.accessibilityLabel}`}
-                  disabled={!generalNotificationsEnabled}
+                  disabled={weeklyReminderControlsDisabled}
                   label={day.label}
                   minWidth={34}
-                  selectedValues={selectedWeekDays}
+                  selectedValues={creditReminderConfiguration.weekDays}
                   value={day.value}
-                  onSelectedValuesChange={setSelectedWeekDays}
+                  onSelectedValuesChange={handleCreditReminderWeekDaysChange}
                 />
               ))}
             </WeekDayRow>
@@ -159,8 +259,8 @@ export function ConfigurationScreen() {
             <ScheduleRow>
               <ScheduleLabel>Horário:</ScheduleLabel>
               <TimeWheelInput
-                value={notificationTime}
-                onChange={setNotificationTime}
+                value={creditReminderConfiguration.time}
+                onChange={handleCreditReminderTimeChange}
               />
             </ScheduleRow>
           </NotificationSubsection>
