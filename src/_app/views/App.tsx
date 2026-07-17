@@ -1,11 +1,12 @@
 import { ThemeProvider as EmotionProvider } from "@emotion/react";
+import { useSessionBootstrap } from "@features/Auth";
 import "@features/configurationScreen/tasks/balanceMonitorTask";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { configureNotificationHandler } from "@shared/notifications/configureNotificationHandler";
 import { darkColorSchema, lightColorSchema, theme } from "@shared/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useInitializeApp } from "../hooks/useInitializeApp";
 import RouterSlot from "./RouterSlot";
@@ -17,14 +18,16 @@ export default function App() {
     void configureNotificationHandler();
   }, []);
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
+  const sessionStatus = useSessionBootstrap();
+  const [queryClient] = useState(() => new QueryClient());
+
+  if (!loaded || sessionStatus === "initializing") {
     return null;
   }
 
   return (
     <ThemeProvider value={DarkTheme}>
-      <QueryClientProvider client={new QueryClient()}>
+      <QueryClientProvider client={queryClient}>
         <EmotionProvider
           theme={{
             ...theme,

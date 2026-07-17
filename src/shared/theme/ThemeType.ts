@@ -13,6 +13,7 @@ export type ColorsType = {
   controlMuted: string;
   controlDisabled: string;
   border: string;
+  danger: string;
   tabBarActiveTintColor: string;
   transparent: string;
   shadow: string;

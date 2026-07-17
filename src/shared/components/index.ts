@@ -5,6 +5,7 @@ export * from "./HeaderBack/HeaderBack";
 export * from "./AppInput/AppInput";
 export * from "./IconButton/IconButton";
 export * from "./IconSymbol/IconSymbol";
+export * from "./Logo/Logo";
 export * from "./MenuButton/MenuButton";
 export * from "./PageBox/PageBox";
 export * from "./SelectableBox/SelectableBox";

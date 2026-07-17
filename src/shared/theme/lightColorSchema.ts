@@ -11,6 +11,7 @@ export const lightColorSchema: ThemeType["colors"] = {
   secondary: "#00aa9d",
   text: "#000000",
   mutedText: "#667085",
+  danger: "#B42318",
   controlMuted: "#9AA8A4",
   controlDisabled: "#6F7F7B",
   border: "#00000027",
