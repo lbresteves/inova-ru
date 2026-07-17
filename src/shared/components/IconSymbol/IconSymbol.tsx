@@ -1,7 +1,7 @@
 // Fallback for using MaterialIcons on Android and web.
 
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTheme } from "@emotion/react";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { SFSymbol, SymbolWeight } from "expo-symbols";
 import type { ComponentProps } from "react";
 import { type StyleProp, type TextStyle } from "react-native";
@@ -35,6 +35,7 @@ const MAPPING = {
   "arrow.clockwise": "refresh",
   "clock.arrow.circlepath": "history",
   "fork.knife": "restaurant",
+  "info.circle": "info-outline",
 } satisfies Partial<Record<SFSymbol, MaterialIconName>>;
 
 /**
