@@ -6,7 +6,7 @@ export const Container = styled(ThemedView)(({ theme }) => ({
   borderBottomLeftRadius: 24,
   borderBottomRightRadius: 24,
   paddingHorizontal: 20,
-  paddingTop: 20,
+  paddingTop: 40,
   paddingBottom: 24,
   gap: 24,
 }));
