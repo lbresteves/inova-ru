@@ -19,5 +19,11 @@ export const darkColorSchema: ThemeType["colors"] = {
   tabBarActiveTintColor: "#00aa9d",
   transparent: "transparent",
   returnBtnBackground: "#0C5347",
-  returnIconColor: "#ffffffde",
+  activeIconColor: "#FFFFFF",
+  unactiveIconColor: "#A6A6A6",
+  titleColor: "#FFFFFF",
+  statusApprovedBackgroundColor: "rgba(0, 170, 157, 0.16)",
+  statusExpiredColor: "#B54A40",
+  statusExpiredBackgroundColor: "rgba(253, 162, 155, 0.18)",
+  filterActiveBorderColor: "#1A8F6E",
 };

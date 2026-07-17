@@ -16,7 +16,7 @@ export function ThemedButton({ iconName, onPress }: { iconName: IconSymbolName; 
                 justifyContent: "center",
             }}
         >
-            <IconSymbol size={28} name={iconName} color="returnIconColor" />
+            <IconSymbol size={28} name={iconName} color="activeIconColor" />
         </TouchableOpacity>
     );
 }

@@ -26,6 +26,14 @@ export interface SideMenuProps {
   onClose: () => void;
 }
 
+type MenuOption = {
+  label: string;
+  route?: Href;
+};
+
+const RECHARGE_ROUTE = "/main/recharge" as Href;
+const SETTINGS_ROUTE = "/settings" as Href;
+
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -59,17 +67,17 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     outputRange: [-width * 0.75, 0],
   });
 
-  const menuOptions = [
-    { label: "Recarregar", route: "/recharge" },
-    { label: "Hist. de Recargas", route: "/recharge-history" },
-    { label: "Hist. de Refeições", route: "/meal-history" },
-    { label: "Cardápio", route: "/menu" },
-    { label: "Configurações", route: "/settings" },
+  const menuOptions: MenuOption[] = [
+    { label: "Recarregar", route: RECHARGE_ROUTE },
+    { label: "Hist. de Recargas" },
+    { label: "Hist. de Refeições" },
+    { label: "Cardápio" },
+    { label: "Configurações", route: SETTINGS_ROUTE },
   ];
 
-  function handleNavigation(route: string) {
-    if (route === "/settings") {
-      router.push("/settings" as Href);
+  function handleNavigation(route?: Href) {
+    if (route) {
+      router.push(route);
     }
 
     onClose();
