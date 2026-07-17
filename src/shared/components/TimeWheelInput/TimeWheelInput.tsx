@@ -32,6 +32,7 @@ export interface TimeWheelValue {
 
 export interface TimeWheelInputProps {
   accessibilityLabel?: string;
+  disabled?: boolean;
   minuteInterval?: number;
   value: TimeWheelValue;
   onChange: (value: TimeWheelValue) => void;
@@ -67,6 +68,7 @@ function WheelNumberItem({
 
 export function TimeWheelInput({
   accessibilityLabel = "Selecionar horário",
+  disabled,
   minuteInterval = 1,
   value,
   onChange,
@@ -110,6 +112,10 @@ export function TimeWheelInput({
   }, [isOpen, minutes, value.hour, value.minute]);
 
   function openPicker() {
+    if (disabled) {
+      return;
+    }
+
     setDraftHour(value.hour);
     setDraftMinute(value.minute);
     setIsOpen(true);
@@ -131,10 +137,12 @@ export function TimeWheelInput({
       <TimeInputButton
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
-        activeOpacity={0.82}
+        accessibilityState={{ disabled }}
+        activeOpacity={disabled ? 1 : 0.82}
+        disabled={disabled}
         onPress={openPicker}
       >
-        <TimeInputText>{timeText}</TimeInputText>
+        <TimeInputText disabled={disabled}>{timeText}</TimeInputText>
       </TimeInputButton>
 
       <Modal

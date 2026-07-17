@@ -8,24 +8,34 @@ interface WheelItemStyleProps {
   selected?: boolean;
 }
 
-export const TimeInputButton = styled.TouchableOpacity(({ theme }) => ({
-  alignItems: "center",
-  backgroundColor: theme.colors.background,
-  borderColor: theme.colors.border,
-  borderRadius: 10,
-  borderWidth: 1,
-  justifyContent: "center",
-  minHeight: 36,
-  minWidth: 56,
-  paddingHorizontal: 10,
-}));
+interface TimeInputStyleProps {
+  disabled?: boolean;
+}
 
-export const TimeInputText = styled(ThemedText)(({ theme }) => ({
-  color: theme.colors.text,
-  fontSize: 14,
-  fontWeight: "600",
-  lineHeight: 20,
-}));
+export const TimeInputButton = styled.TouchableOpacity<TimeInputStyleProps>(
+  ({ disabled, theme }) => ({
+    alignItems: "center",
+    backgroundColor: disabled
+      ? theme.colors.controlDisabled
+      : theme.colors.background,
+    borderColor: disabled ? theme.colors.controlDisabled : theme.colors.border,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: "center",
+    minHeight: 36,
+    minWidth: 56,
+    paddingHorizontal: 10,
+  })
+);
+
+export const TimeInputText = styled(ThemedText)<TimeInputStyleProps>(
+  ({ disabled, theme }) => ({
+    color: disabled ? theme.colors.mutedText : theme.colors.text,
+    fontSize: 14,
+    fontWeight: "600",
+    lineHeight: 20,
+  })
+);
 
 export const ModalRoot = styled.View({
   flex: 1,

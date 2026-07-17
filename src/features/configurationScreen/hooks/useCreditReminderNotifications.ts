@@ -1,5 +1,5 @@
 import type { NotificationPermissionsStatus } from "expo-notifications";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Linking, Platform } from "react-native";
 
 import { getCreditReminderNotificationMessage } from "../utils/creditReminderNotificationMessages";
@@ -86,7 +86,7 @@ export interface UseCreditReminderNotificationsReturn {
 }
 
 const CREDIT_REMINDER_DEFAULT_CONFIGURATION: CreditReminderConfiguration = {
-  enabled: true,
+  enabled: false,
   time: {
     hour: 10,
     minute: 30,
@@ -316,16 +316,25 @@ async function requestNotificationPermissionAsync(
 }
 
 async function cancelCreditReminderNotificationsAsync(
+  weekDays: readonly CreditReminderWeekDay[] = CREDIT_REMINDER_WEEK_DAYS,
   notifications?: ExpoNotificationsModule
 ): Promise<void> {
   const Notifications = notifications ?? (await getNotificationsAsync());
 
   await Promise.all(
-    CREDIT_REMINDER_WEEK_DAYS.map((weekDay) =>
+    weekDays.map((weekDay) =>
       Notifications.cancelScheduledNotificationAsync(
         CREDIT_REMINDER_NOTIFICATION_IDENTIFIERS[weekDay]
       )
     )
+  );
+}
+
+function getUnselectedWeekDays(
+  selectedWeekDays: CreditReminderWeekDay[]
+): CreditReminderWeekDay[] {
+  return CREDIT_REMINDER_WEEK_DAYS.filter(
+    (weekDay) => !selectedWeekDays.includes(weekDay)
   );
 }
 
@@ -370,9 +379,13 @@ async function syncCreditReminderNotificationsAsync(
   const Notifications = await getNotificationsAsync();
 
   await ensureAndroidNotificationChannelAsync(Notifications);
-  await cancelCreditReminderNotificationsAsync(Notifications);
 
   if (!configuration.enabled || configuration.weekDays.length === 0) {
+    await cancelCreditReminderNotificationsAsync(
+      CREDIT_REMINDER_WEEK_DAYS,
+      Notifications
+    );
+
     const permission = await getCurrentPermissionAsync(Notifications);
     return {
       permission,
@@ -392,6 +405,20 @@ async function syncCreditReminderNotificationsAsync(
   }
 
   await scheduleCreditReminderNotificationsAsync(configuration, Notifications);
+  await cancelCreditReminderNotificationsAsync(
+    getUnselectedWeekDays(configuration.weekDays),
+    Notifications
+  );
+
+  return {
+    permission,
+    status: "idle",
+  };
+}
+
+async function refreshCreditReminderPermissionAsync(): Promise<CreditReminderSyncResult> {
+  const Notifications = await getNotificationsAsync();
+  const permission = await getCurrentPermissionAsync(Notifications);
 
   return {
     permission,
@@ -412,6 +439,10 @@ export function useCreditReminderNotifications(): UseCreditReminderNotifications
     useState<boolean>(true);
   const [syncStatus, setSyncStatus] =
     useState<CreditReminderSyncStatus>("idle");
+  const configurationRef = useRef<CreditReminderConfiguration>(
+    CREDIT_REMINDER_DEFAULT_CONFIGURATION
+  );
+  const syncOperationIdRef = useRef<number>(0);
 
   function applySyncResult(syncResult: CreditReminderSyncResult): void {
     setCanAskPermissionAgain(syncResult.permission.canAskAgain);
@@ -419,18 +450,40 @@ export function useCreditReminderNotifications(): UseCreditReminderNotifications
     setSyncStatus(syncResult.status);
   }
 
+  function setCurrentConfiguration(
+    nextConfiguration: CreditReminderConfiguration
+  ): void {
+    configurationRef.current = nextConfiguration;
+    setConfiguration(nextConfiguration);
+  }
+
+  function startSyncOperation(): number {
+    const nextOperationId = syncOperationIdRef.current + 1;
+    syncOperationIdRef.current = nextOperationId;
+    return nextOperationId;
+  }
+
+  function isLatestSyncOperation(operationId: number): boolean {
+    return syncOperationIdRef.current === operationId;
+  }
+
   async function applyConfigurationAsync(
     nextConfiguration: CreditReminderConfiguration,
     shouldRequestPermission: boolean
   ): Promise<void> {
-    setConfiguration(nextConfiguration);
+    const operationId = startSyncOperation();
+
+    setCurrentConfiguration(nextConfiguration);
     setIsSaving(true);
 
     try {
       await persistConfigurationAsync(nextConfiguration);
     } catch {
-      setSyncStatus("storage-error");
-      setIsSaving(false);
+      if (isLatestSyncOperation(operationId)) {
+        setSyncStatus("storage-error");
+        setIsSaving(false);
+      }
+
       return;
     }
 
@@ -439,59 +492,79 @@ export function useCreditReminderNotifications(): UseCreditReminderNotifications
         nextConfiguration,
         shouldRequestPermission
       );
-      applySyncResult(syncResult);
+
+      if (isLatestSyncOperation(operationId)) {
+        applySyncResult(syncResult);
+      }
     } catch {
-      setSyncStatus("schedule-error");
+      if (isLatestSyncOperation(operationId)) {
+        setSyncStatus("schedule-error");
+      }
     } finally {
-      setIsSaving(false);
+      if (isLatestSyncOperation(operationId)) {
+        setIsSaving(false);
+      }
     }
   }
 
   async function updateEnabled(enabled: boolean): Promise<void> {
-    await applyConfigurationAsync(
-      {
-        ...configuration,
-        enabled,
-      },
-      true
-    );
+    const nextConfiguration = {
+      ...configurationRef.current,
+      enabled,
+    };
+
+    await applyConfigurationAsync(nextConfiguration, enabled);
   }
 
   async function updateWeekDays(
     weekDays: CreditReminderWeekDay[]
   ): Promise<void> {
+    const nextWeekDays = normalizeWeekDays(weekDays);
+    const nextConfiguration = {
+      ...configurationRef.current,
+      weekDays: nextWeekDays,
+    };
+
     await applyConfigurationAsync(
-      {
-        ...configuration,
-        weekDays: normalizeWeekDays(weekDays),
-      },
-      true
+      nextConfiguration,
+      nextConfiguration.enabled && nextWeekDays.length > 0
     );
   }
 
   async function updateTime(time: CreditReminderTime): Promise<void> {
+    const nextConfiguration = {
+      ...configurationRef.current,
+      time,
+    };
+
     await applyConfigurationAsync(
-      {
-        ...configuration,
-        time,
-      },
-      true
+      nextConfiguration,
+      nextConfiguration.enabled && nextConfiguration.weekDays.length > 0
     );
   }
 
   async function retryPermissionRequest(): Promise<void> {
+    const operationId = startSyncOperation();
+
     setIsSaving(true);
 
     try {
       const syncResult = await syncCreditReminderNotificationsAsync(
-        configuration,
+        configurationRef.current,
         true
       );
-      applySyncResult(syncResult);
+
+      if (isLatestSyncOperation(operationId)) {
+        applySyncResult(syncResult);
+      }
     } catch {
-      setSyncStatus("schedule-error");
+      if (isLatestSyncOperation(operationId)) {
+        setSyncStatus("schedule-error");
+      }
     } finally {
-      setIsSaving(false);
+      if (isLatestSyncOperation(operationId)) {
+        setIsSaving(false);
+      }
     }
   }
 
@@ -502,41 +575,48 @@ export function useCreditReminderNotifications(): UseCreditReminderNotifications
   useEffect(() => {
     let isMounted = true;
 
+    async function synchronizeStoredConfigurationAsync(
+      storedConfiguration: CreditReminderConfiguration,
+      operationId: number
+    ): Promise<void> {
+      try {
+        const syncResult =
+          storedConfiguration.enabled && storedConfiguration.weekDays.length > 0
+            ? await syncCreditReminderNotificationsAsync(
+                storedConfiguration,
+                false
+              )
+            : await refreshCreditReminderPermissionAsync();
+
+        if (isMounted && isLatestSyncOperation(operationId)) {
+          applySyncResult(syncResult);
+        }
+      } catch {
+        if (isMounted && isLatestSyncOperation(operationId)) {
+          setSyncStatus("schedule-error");
+        }
+      }
+    }
+
     async function initializeNotifications(): Promise<void> {
       try {
-        await ensureAndroidNotificationChannelAsync();
-
         const storedConfiguration = await loadStoredConfigurationAsync();
-        const permission = await getCurrentPermissionAsync();
 
         if (!isMounted) {
           return;
         }
 
-        setConfiguration(storedConfiguration);
-        setCanAskPermissionAgain(permission.canAskAgain);
-        setPermissionStatus(permission.status);
+        setCurrentConfiguration(storedConfiguration);
+        setIsLoading(false);
 
-        if (
-          storedConfiguration.enabled &&
-          storedConfiguration.weekDays.length > 0 &&
-          permission.granted
-        ) {
-          const syncResult = await syncCreditReminderNotificationsAsync(
-            storedConfiguration,
-            false
-          );
-
-          if (isMounted) {
-            applySyncResult(syncResult);
-          }
-        }
+        const operationId = startSyncOperation();
+        void synchronizeStoredConfigurationAsync(
+          storedConfiguration,
+          operationId
+        );
       } catch {
         if (isMounted) {
           setSyncStatus("storage-error");
-        }
-      } finally {
-        if (isMounted) {
           setIsLoading(false);
         }
       }

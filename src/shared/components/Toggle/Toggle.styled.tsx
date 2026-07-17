@@ -7,20 +7,15 @@ interface ToggleStyleProps {
 
 function getTrackColor({
   checked,
-  disabled,
   theme,
 }: ToggleStyleProps & { theme: import("@emotion/react").Theme }) {
-  if (disabled) {
-    return theme.colors.controlDisabled;
-  }
-
   return checked ? theme.colors.primary : theme.colors.controlMuted;
 }
 
 export const ToggleTrack = styled.TouchableOpacity<ToggleStyleProps>(
-  ({ checked, disabled, theme }) => ({
+  ({ checked, theme }) => ({
     alignItems: "flex-start",
-    backgroundColor: getTrackColor({ checked, disabled, theme }),
+    backgroundColor: getTrackColor({ checked, theme }),
     borderRadius: 12,
     height: 24,
     justifyContent: "center",

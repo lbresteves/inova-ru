@@ -117,7 +117,8 @@ export function ConfigurationScreen() {
     !generalNotificationsEnabled || isBalanceMonitorLoading;
   const weeklyReminderControlsDisabled =
     weeklyReminderDisabled || !creditReminderConfiguration.enabled;
-  const balanceMonitorControlsDisabled = balanceMonitorDisabled;
+  const balanceMonitorControlsDisabled =
+    balanceMonitorDisabled || !balanceMonitorConfiguration.enabled;
   const shouldShowPermissionNotice =
     generalNotificationsEnabled &&
     creditReminderConfiguration.enabled &&
@@ -379,6 +380,7 @@ export function ConfigurationScreen() {
             <ScheduleRow>
               <ScheduleLabel>Horário:</ScheduleLabel>
               <TimeWheelInput
+                disabled={weeklyReminderControlsDisabled}
                 value={creditReminderConfiguration.time}
                 onChange={handleCreditReminderTimeChange}
               />
