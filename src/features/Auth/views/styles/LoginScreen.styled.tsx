@@ -2,7 +2,7 @@ import styled from "@emotion/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const Screen = styled(SafeAreaView)(({ theme }) => ({
-  backgroundColor: theme.colors.background,
+  backgroundColor: theme.colors.surface,
   flex: 1,
 }));
 
@@ -19,7 +19,7 @@ export const LoginContent = styled.View({
 });
 export const BrandBlock = styled.View({ alignItems: "center" });
 export const ScreenTitle = styled.Text(({ theme }) => ({
-  color: theme.colors.text,
+  color: theme.colors.primary,
   fontSize: 28,
   fontWeight: theme.typography.title.fontWeight,
   lineHeight: 36,
@@ -34,8 +34,24 @@ export const Subtitle = styled.Text(({ theme }) => ({
   marginTop: 2,
   textAlign: "center",
 }));
-export const Form = styled.View({ gap: 18, marginTop: 64 });
-export const Spacer = styled.View({ flex: 1, minHeight: 56 });
+export const Form = styled.View(({ theme }) => ({
+  backgroundColor: theme.colors.background,
+  borderColor: theme.colors.border,
+  borderRadius: 16,
+  borderWidth: 1,
+  elevation: 2,
+  gap: 18,
+  marginTop: 32,
+  padding: 20,
+  shadowColor: theme.colors.shadow,
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+}));
+export const Spacer = styled.View({ flex: 1, minHeight: 32 });
 export const ServerErrorText = styled.Text(({ theme }) => ({
   color: theme.colors.danger,
   fontSize: 13,

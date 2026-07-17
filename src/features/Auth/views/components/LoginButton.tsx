@@ -1,13 +1,14 @@
 import styled from "@emotion/native";
+import { useTheme } from "@emotion/react";
 import { ActivityIndicator } from "react-native";
 
 const Button = styled.Pressable<{ $disabled: boolean }>(
   ({ theme, $disabled }) => ({
     alignItems: "center",
     backgroundColor: theme.colors.primary,
-    borderRadius: 10,
+    borderRadius: 12,
     justifyContent: "center",
-    minHeight: 52,
+    minHeight: 50,
     opacity: $disabled ? 0.5 : 1,
     paddingHorizontal: 18,
   }),
@@ -30,6 +31,7 @@ export function LoginButton({
   loading,
   onPress,
 }: LoginButtonProps) {
+  const theme = useTheme();
   const isDisabled = disabled || loading;
 
   return (
@@ -40,7 +42,7 @@ export function LoginButton({
       onPress={onPress}
     >
       {loading ? (
-        <ActivityIndicator color="#FFFFFF" />
+        <ActivityIndicator color={theme.colors.onPrimary} />
       ) : (
         <ButtonText>Entrar</ButtonText>
       )}

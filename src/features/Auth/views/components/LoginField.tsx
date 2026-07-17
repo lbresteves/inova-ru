@@ -16,25 +16,38 @@ const InputContainer = styled.View<{
   $hasError: boolean;
 }>(({ theme, $focused, $hasError }) => ({
   alignItems: "center",
-  backgroundColor: theme.colors.background,
+  backgroundColor: theme.colors.surface,
   borderColor: $hasError
     ? theme.colors.danger
     : $focused
       ? theme.colors.primary
       : theme.colors.border,
-  borderRadius: 10,
+  borderRadius: 12,
   borderWidth: $focused || $hasError ? 2 : 1,
   flexDirection: "row",
   minHeight: 52,
   paddingHorizontal: 14,
 }));
-const Input = styled.TextInput(({ theme }) => ({
-  color: theme.colors.text,
+const InputArea = styled.View({
   flex: 1,
+  justifyContent: "center",
+  position: "relative",
+});
+const Input = styled.TextInput<{ $masked: boolean }>(({ theme, $masked }) => ({
+  color: $masked ? theme.colors.transparent : theme.colors.text,
   fontSize: theme.typography.inputText.fontSize,
   fontWeight: theme.typography.inputText.fontWeight,
   lineHeight: theme.typography.inputText.lineHeight,
   paddingVertical: 12,
+}));
+const MaskedPassword = styled.Text(({ theme }) => ({
+  color: theme.colors.text,
+  fontSize: theme.typography.inputText.fontSize,
+  fontWeight: theme.typography.inputText.fontWeight,
+  left: 0,
+  lineHeight: theme.typography.inputText.lineHeight,
+  position: "absolute",
+  right: 0,
 }));
 const ErrorText = styled.Text(({ theme }) => ({
   color: theme.colors.danger,
@@ -68,24 +81,48 @@ export function LoginField({
 }: LoginFieldProps) {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
+  const shouldMaskPassword = Boolean(
+    inputProps.secureTextEntry && !passwordVisible,
+  );
+  const inputValue = String(inputProps.value ?? "");
+  const maskedValue = "•".repeat(Array.from(inputValue).length);
 
   return (
     <Field>
       <Label>{label}</Label>
       <InputContainer $focused={focused} $hasError={Boolean(errorText)}>
-        <Input
-          accessibilityLabel={inputProps.accessibilityLabel ?? label}
-          onBlur={(event) => {
-            setFocused(false);
-            onBlur?.(event);
-          }}
-          onFocus={(event) => {
-            setFocused(true);
-            onFocus?.(event);
-          }}
-          placeholderTextColor={theme.colors.mutedText}
-          {...inputProps}
-        />
+        <InputArea>
+          <Input
+            {...inputProps}
+            $masked={shouldMaskPassword}
+            accessibilityLabel={inputProps.accessibilityLabel ?? label}
+            caretHidden={shouldMaskPassword || inputProps.caretHidden}
+            onBlur={(event) => {
+              setFocused(false);
+              onBlur?.(event);
+            }}
+            onFocus={(event) => {
+              setFocused(true);
+              onFocus?.(event);
+            }}
+            placeholderTextColor={theme.colors.mutedText}
+            selectionColor={
+              shouldMaskPassword
+                ? theme.colors.transparent
+                : inputProps.selectionColor ?? theme.colors.primary
+            }
+          />
+          {shouldMaskPassword && maskedValue ? (
+            <MaskedPassword
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+              numberOfLines={1}
+              pointerEvents="none"
+            >
+              {maskedValue}
+            </MaskedPassword>
+          ) : null}
+        </InputArea>
         {onToggleVisibility ? (
           <VisibilityButton
             accessibilityLabel={
