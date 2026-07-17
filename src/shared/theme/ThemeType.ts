@@ -11,6 +11,7 @@ export type ColorsType = {
   text: string;
   mutedText: string;
   border: string;
+  danger: string;
   tabBarActiveTintColor: string;
   transparent: string;
   shadow: string;
