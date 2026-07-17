@@ -11,7 +11,7 @@ export const faqData = [
   },
   {
     id: "3",
-    question: "Como emitir comprovante?",
-    answer: "Acesse o seu 'Histórico de recargas', selecione a transação desejada e clique em 'Emitir comprovante'.",
+    question: "Como desativar notificações no App?",
+    answer: "Acesse a tela inicial e clique na opção 'Abrir Notificações'. Em seguida, desabilite a opção 'Habilitar notificações gerais'.",
   },
 ];
