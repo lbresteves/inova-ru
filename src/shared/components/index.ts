@@ -1,3 +1,4 @@
+export * from "./AppButton/AppButton";
 export * from "./BoxContent/BoxContent";
 export * from "./Collapsible/Collapsible";
 export * from "./HapticTab/HapticTab";
