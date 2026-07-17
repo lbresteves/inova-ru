@@ -190,8 +190,6 @@ export default function PaymentScreen() {
           <QrCard>
             {payment.qrCodeUri ? (
               <QrImage
-                accessibilityIgnoresInvertColors
-                accessibilityLabel="QR Code para pagamento"
                 resizeMode="contain"
                 source={{ uri: payment.qrCodeUri }}
               />
@@ -205,22 +203,17 @@ export default function PaymentScreen() {
           <AmountText>{formatCurrency(payment.amount)}</AmountText>
 
           <CodeBox>
-            <CodeText numberOfLines={1} selectable>
+            <CodeText numberOfLines={1}>
               {payment.copyPasteCode}
             </CodeText>
             <IconButton
-              accessibilityLabel="Copiar código de pagamento"
               color="primary"
               name="doc.on.doc"
               onPress={() => void copyPaymentCode()}
               size={20}
             />
           </CodeBox>
-          {copyFeedback ? (
-            <CopyFeedback accessibilityLiveRegion="polite">
-              {copyFeedback}
-            </CopyFeedback>
-          ) : null}
+          {copyFeedback ? <CopyFeedback>{copyFeedback}</CopyFeedback> : null}
           <WaitingCard>
             <ActivityIndicator color={theme.colors.primary} size="small" />
             <WaitingTexts>
