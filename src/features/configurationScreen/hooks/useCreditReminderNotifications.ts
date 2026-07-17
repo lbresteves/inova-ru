@@ -6,7 +6,7 @@ import { getCreditReminderNotificationMessage } from "../utils/creditReminderNot
 
 const CREDIT_REMINDER_STORAGE_KEY =
   "@inova-ru:credit-reminder-notifications";
-const CREDIT_REMINDER_NOTIFICATION_CHANNEL_ID = "credit-reminder";
+const CREDIT_REMINDER_NOTIFICATION_CHANNEL_ID = "credit-reminder-heads-up";
 
 type AsyncStorageModule =
   typeof import("@react-native-async-storage/async-storage")["default"];
@@ -230,8 +230,9 @@ async function ensureAndroidNotificationChannelAsync(
   await Notifications.setNotificationChannelAsync(
     CREDIT_REMINDER_NOTIFICATION_CHANNEL_ID,
     {
-      importance: Notifications.AndroidImportance.DEFAULT,
-      name: "Lembretes de recarga",
+      enableVibrate: true,
+      importance: Notifications.AndroidImportance.HIGH,
+      name: "Lembretes de recarga importantes",
       vibrationPattern: [0, 250, 250, 250],
     }
   );
@@ -344,8 +345,10 @@ async function scheduleCreditReminderNotificationsAsync(
             source: "credit-reminder",
             weekDay,
           },
+          priority: Notifications.AndroidNotificationPriority.MAX,
           sound: true,
           title: notificationMessage.title,
+          vibrate: [0, 250, 250, 250],
         },
         identifier: CREDIT_REMINDER_NOTIFICATION_IDENTIFIERS[weekDay],
         trigger: {
