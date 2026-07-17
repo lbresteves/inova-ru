@@ -69,7 +69,7 @@ export const ItemStatusNotFree = styled.Text(({ theme }) => ({
     paddingVertical: 5,
     paddingHorizontal: 11,
     borderRadius: 999,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     backgroundColor: "transparent",
     color: theme.colors.titleColor,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, ListRenderItem } from "react-native";
+import { ActivityIndicator, FlatList, ListRenderItem, View } from "react-native";
 import { ThemedText } from "../ThemedText/ThemedText";
 
 interface TableContentProps<F> {
@@ -94,6 +94,7 @@ export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }
             keyExtractor={keyExtractor ?? ((item, index) => item?.id?.toString() ?? index.toString())}
             onLayout={handleLayout}
             onContentSizeChange={handleContentSizeChange}
+            ItemSeparatorComponent={() => <View style={{ height: 5 }} />} // gap vertical 12
             onEndReached={fetchMoreData}
             onEndReachedThreshold={0.3}
             ListEmptyComponent={

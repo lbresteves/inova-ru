@@ -3,6 +3,7 @@ import styled from "@emotion/native";
 export const SelectTouchable = styled.TouchableOpacity<{ active?: boolean }>(({ active, theme }) => ({
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 13,
     borderRadius: 10,

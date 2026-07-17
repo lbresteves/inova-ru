@@ -2,7 +2,7 @@ export const mock = [
   {
     data: [
       {
-        data_hora: "2026-04-25T12:05:33-03:00",
+        data_hora: "2026-07-02T12:05:33-03:00",
         filial: { codigo: "0003", nome: "RU Setorial 1 Campus Pampulha, Belo Horizonte" },
         quantidade: 1,
         valor_total: 2.40,
@@ -74,7 +74,7 @@ export const mock = [
         tipo_consumidor: "VISITANTE"
       },
       {
-        data_hora: "2026-04-19T07:50:10-03:00",
+        data_hora: "2026-04-19T08:50:10-03:00",
         filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
         quantidade: 2,
         valor_total: 4.80,
@@ -98,7 +98,7 @@ export const mock = [
         tipo_consumidor: "SERVIDOR"
       },
       {
-        data_hora: "2026-04-16T13:05:22-03:00",
+        data_hora: "2026-07-16T13:05:22-03:00",
         filial: { codigo: "0002", nome: "RU Setorial 2 Campus Pampulha, Belo Horizonte" },
         quantidade: 1,
         valor_total: 2.40,
@@ -130,7 +130,7 @@ export const mock = [
         tipo_consumidor: "SERVIDOR"
       },
       {
-        data_hora: "2026-04-12T12:05:33-03:00",
+        data_hora: "2026-07-12T12:05:33-03:00",
         filial: { codigo: "0001", nome: "RU Saúde/Direito Campus Saúde, Belo Horizonte" },
         quantidade: 1,
         valor_total: 2.40,
@@ -158,6 +158,94 @@ export const mock = [
         filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
         quantidade: 3,
         valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-07-08T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-04-06T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-04-06T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-04-05T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-04-04T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-04-03T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 7.20,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-03-29T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 8.10,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-03-28T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 8.10,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-07-10T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 8.10,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-06-26T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 8.10,
+        gratuidade: false,
+        tipo_consumidor: "ESTUDANTE POS-GRAD"
+      },
+      {
+        data_hora: "2026-07-08T12:05:33-03:00",
+        filial: { codigo: "0005", nome: "RU HRTN Hospital Risoleta T. Neves, BH" },
+        quantidade: 3,
+        valor_total: 8.10,
         gratuidade: false,
         tipo_consumidor: "ESTUDANTE POS-GRAD"
       }
