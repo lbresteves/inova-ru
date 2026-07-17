@@ -18,6 +18,7 @@ type ThemeColorName = keyof ThemeType["colors"];
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
 const MAPPING = {
+  "chevron.down": "arrow-drop-down",
   "arrow.left": "arrow-back",
   "house.fill": "home",
   "paperplane.fill": "send",
