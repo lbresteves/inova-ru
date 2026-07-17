@@ -11,6 +11,7 @@ export const lightColorSchema: ThemeType["colors"] = {
   secondary: "#00aa9d",
   text: "#000000",
   mutedText: "#667085",
+  danger: "#B42318",
   border: "#00000027",
   shadow: "#000000",
   tabBarActiveTintColor: "#00675f",
