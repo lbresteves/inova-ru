@@ -6,6 +6,7 @@ import { TableFilterSelect } from "@/src/shared/components/Table/TableFilterSele
 import { TableFilterButton } from "@/src/shared/components/Table/TableFilterButton";
 import React, { useState } from "react";
 import { fetchRecargas, RecargaFilters } from "../utils/FecthRecargas";
+import { router } from "expo-router";
 
 const PERIOD_ALL = 0;
 const PERIOD_THIS_MONTH = 1;
@@ -72,7 +73,7 @@ export default function HistoricoRecargasScreen() {
     return (
     <>
     <Container>
-        <HeaderBack title="Histórico de Recargas" onReturnPress={() => {console.log("Back pressed")}} />
+        <HeaderBack title="Histórico de Recargas" onReturnPress={() => {router.replace("/main/home")}} />
         <Table>
             <TableHeader>
                 <TableFilterSelect

@@ -32,6 +32,8 @@ type MenuOption = {
 };
 
 const RECHARGE_ROUTE = "/main/recharge" as Href;
+const RECHARGE_HISTORY_ROUTE = "/main/recharge-history" as Href;
+const MEAL_HISTORY_ROUTE = "/main/meal-history" as Href;
 const SETTINGS_ROUTE = "/settings" as Href;
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
@@ -69,8 +71,8 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
   const menuOptions: MenuOption[] = [
     { label: "Recarregar", route: RECHARGE_ROUTE },
-    { label: "Hist. de Recargas" },
-    { label: "Hist. de Refeições" },
+    { label: "Hist. de Recargas", route: RECHARGE_HISTORY_ROUTE },
+    { label: "Hist. de Refeições", route: MEAL_HISTORY_ROUTE },
     { label: "Cardápio" },
     { label: "Configurações", route: SETTINGS_ROUTE },
   ];

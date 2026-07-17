@@ -32,7 +32,7 @@ export const TableItem = styled.View(({ theme }) => ({
     alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 14,
-    borderRadius: 12,
+    borderRadius: 12, 
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: theme.colors.border,
@@ -55,7 +55,7 @@ export const ItemLeftSub = styled.Text(({ theme }) => ({
     color: theme.colors.mutedText,
 }));
 
-export const ItemStatusApproved = styled.Text(({ theme }) => ({
+export const ItemStatusFree = styled.Text(({ theme }) => ({
     paddingVertical: 5,
     paddingHorizontal: 11,
     borderRadius: 999,
@@ -65,12 +65,13 @@ export const ItemStatusApproved = styled.Text(({ theme }) => ({
     color: theme.colors.activeIconColor,
 }));
 
-export const ItemStatusExpired = styled.Text(({ theme }) => ({
+export const ItemStatusNotFree = styled.Text(({ theme }) => ({
     paddingVertical: 5,
     paddingHorizontal: 11,
     borderRadius: 999,
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: 700,
-    backgroundColor: theme.colors.statusExpiredBackgroundColor,
-    color: theme.colors.statusExpiredColor,
+    backgroundColor: "transparent",
+    color: theme.colors.titleColor,
+    // font-weight:700; font-size:13.5px; color:var(--ink-900);
 }));
