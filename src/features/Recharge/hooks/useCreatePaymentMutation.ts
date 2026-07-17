@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { rechargeRepository } from "../services/rechargeServices";
-import { rechargeKeys } from "./rechargeKeys";
+import { rechargeKeys } from "../utils/rechargeKeys";
 
 export function useCreatePaymentMutation() {
   const queryClient = useQueryClient();

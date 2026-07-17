@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { rechargeRepository } from "../services/rechargeServices";
-import { rechargeKeys } from "./rechargeKeys";
+import { rechargeKeys } from "../utils/rechargeKeys";
 
 export function usePaymentStatusQuery(
   paymentId: string,

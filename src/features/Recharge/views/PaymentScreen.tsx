@@ -8,7 +8,7 @@ import { AppButton, HeaderBack, IconSymbol } from "@shared/components";
 import { usePaymentCountdown } from "../hooks/usePaymentCountdown";
 import { usePaymentStatusQuery } from "../hooks/usePaymentStatusQuery";
 import { useRechargeBalanceQuery } from "../hooks/useRechargeBalanceQuery";
-import { rechargeKeys } from "../hooks/rechargeKeys";
+import { rechargeKeys } from "../utils/rechargeKeys";
 import type { CreatedPayment, PaymentStatus } from "../types/Recharge";
 import { formatCurrency } from "../utils/currency";
 import { creditPaymentBalance } from "../utils/rechargeCache";

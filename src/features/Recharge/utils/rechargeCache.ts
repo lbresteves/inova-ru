@@ -1,6 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { rechargeKeys } from "../hooks/rechargeKeys";
+import { rechargeKeys } from "./rechargeKeys";
 import type { CreatedPayment, RechargeBalance } from "../types/Recharge";
 
 export function creditPaymentBalance(

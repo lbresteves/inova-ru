@@ -1,6 +1,6 @@
 export { default as PaymentScreen } from "./views/PaymentScreen";
 export { default as RechargeScreen } from "./views/RechargeScreen";
-export * from "./hooks/rechargeKeys";
+export * from "./utils/rechargeKeys";
 export * from "./hooks/useCreatePaymentMutation";
 export * from "./hooks/usePaymentStatusQuery";
 export * from "./hooks/useRechargeBalanceQuery";
