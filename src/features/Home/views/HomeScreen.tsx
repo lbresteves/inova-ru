@@ -23,6 +23,8 @@ import {
 import { SideMenu } from "@features/SideMenu/views/SideMenu";
 
 const RECHARGE_ROUTE = "/main/recharge" as Href;
+const RECHARGE_HISTORY_ROUTE = "/main/recharge-history" as Href;
+const MEAL_HISTORY_ROUTE = "/main/meal-history" as Href;
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -60,7 +62,10 @@ export default function HomeScreen() {
           </PrimaryAction>
 
           <HistoryActions>
-            <HistoryAction activeOpacity={0.8}>
+            <HistoryAction
+              activeOpacity={0.8}
+              onPress={() => router.push(RECHARGE_HISTORY_ROUTE)}
+            >
               <ActionIconBox>
                 <IconSymbol
                   color="primary"
@@ -79,7 +84,10 @@ export default function HomeScreen() {
               />
             </HistoryAction>
 
-            <HistoryAction activeOpacity={0.8}>
+            <HistoryAction
+              activeOpacity={0.8}
+              onPress={() => router.push(MEAL_HISTORY_ROUTE)}
+            >
               <ActionIconBox>
                 <IconSymbol
                   color="primary"
