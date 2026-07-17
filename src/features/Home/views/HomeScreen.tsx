@@ -1,3 +1,8 @@
+import { useRouter } from "expo-router";
+import { useState } from "react";
+
+import { useRechargeBalanceQuery } from "@features/Recharge/hooks/useRechargeBalanceQuery";
+import { formatCurrency } from "@features/Recharge/utils/currency";
 import { IconSymbol } from "@shared/components";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -20,6 +25,8 @@ import {
 import { SideMenu } from "@features/SideMenu/views/SideMenu";
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const balanceQuery = useRechargeBalanceQuery();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -27,14 +34,21 @@ export default function HomeScreen() {
     <>
       <Container contentContainerStyle={{ paddingBottom: 32 }}>
         <HomeHeader
-          balance="R$ 45,50"
+          balance={
+            balanceQuery.data
+              ? formatCurrency(balanceQuery.data.current)
+              : "R$ --"
+          }
           name="João"
           status="Ativo"
           onMenuPress={() => setIsMenuOpen(true)}
           onHelpPress={() => router.push("/about")}
         />
         <Content>
-          <PrimaryAction activeOpacity={0.8}>
+          <PrimaryAction
+            activeOpacity={0.8}
+            onPress={() => router.push("/main/recharge")}
+          >
             <PrimaryActionContent>
               <IconSymbol
                 color="onPrimary"

@@ -35,7 +35,9 @@ const MAPPING = {
   "arrow.clockwise": "refresh",
   "clock.arrow.circlepath": "history",
   "fork.knife": "restaurant",
-  "info.circle": "info-outline",
+  "doc.on.doc": "content-copy",
+  "checkmark.circle.fill": "check-circle",
+  "exclamationmark.triangle.fill": "error",
 } satisfies Partial<Record<SFSymbol, MaterialIconName>>;
 
 /**
