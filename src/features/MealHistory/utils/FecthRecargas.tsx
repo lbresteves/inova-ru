@@ -1,10 +1,5 @@
+import { RecargaFilters } from "../types/RecargaFilters";
 import { mock } from "./mock";
-
-export interface RecargaFilters {
-    dataInicio?: string,
-    dataFim?: string,
-    codigoRU?: string,
-}
 
 const allMockItems = mock.flatMap((page) => page.data);
 const MOCK_PAGE_SIZE = 5;
@@ -37,3 +32,5 @@ export async function fetchRecargas(page: number, filters: RecargaFilters) {
     const end = start + MOCK_PAGE_SIZE;
     return filtered.slice(start, end);
 }
+
+export { RecargaFilters };
