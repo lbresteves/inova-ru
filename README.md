@@ -22,6 +22,8 @@ A solução deve consumir uma API RESTful da FUMP com fluxo de autenticação, c
 - Geração de pagamento via PIX.
 - Acompanhamento de status do pagamento.
 - Histórico de recargas.
+- Histórico de refeições.
+- Cardápio.
 - Configuração de notificações personalizáveis.
 - Monitoramento de saldo baixo.
 - Cache local e cache de requisições para melhorar a experiência do usuário.
@@ -41,14 +43,14 @@ A solução deve consumir uma API RESTful da FUMP com fluxo de autenticação, c
 
 ## Estrutura do Projeto
 
-text
+```text
 app/                  Rotas do Expo Router
 src/_app/             Bootstrap, providers e layout raiz do app
 src/features/         Features da aplicação
 src/shared/           Componentes, tema, API, storage e utilitários compartilhados
 mock/api.json         Mock local da API usado durante desenvolvimento
 mock/README.md        Exemplos de endpoints disponíveis no mock
-
+```
 
 ## Requisitos
 
@@ -63,9 +65,9 @@ mock/README.md        Exemplos de endpoints disponíveis no mock
 
 Instale as dependências:
 
-powershell
+``` powershell
 npm install
-
+```
 
 ## Rodando com o Mock
 
@@ -73,16 +75,18 @@ O mock local usa Mockoon e fica em mock/api.json. Ele existe apenas para desenvo
 
 Abra um terminal e rode o mock:
 
-powershell
+``` powershell
 npm run mock
-
+```
 
 Em outro terminal, configure a URL da API e inicie o Expo:
 
-powershell
+``` powershell
 $env:EXPO_PUBLIC_API_URL="http://192.168.68.105:3000"
+```
+``` powershell
 npx expo start --dev-client --clear
-
+```
 
 Se estiver usando outro computador, rede ou IP local, troque 192.168.68.105 pelo IP da máquina que está rodando o mock. O celular e o computador precisam estar na mesma rede.
 
@@ -90,15 +94,15 @@ Se estiver usando outro computador, rede ou IP local, troque 192.168.68.105 pelo
 
 Como alternativa, você pode criar um arquivo .env.development.local na raiz do projeto:
 
-env
+``` env
 EXPO_PUBLIC_API_URL=http://192.168.68.105:3000
-
+```
 
 Depois, inicie o Expo:
 
-powershell
+``` powershell
 npx expo start --dev-client --clear
-
+```
 
 Arquivos .env*.local estão no .gitignore, então essa configuração fica apenas na sua máquina.
 
@@ -106,9 +110,9 @@ Arquivos .env*.local estão no .gitignore, então essa configuração fica apena
 
 A URL base usada pelo app vem da variável:
 
-text
-EXPO_PUBLIC_API_URL
-
+``` text
+EXPO_PUBLIC_API_URL=http://192.168.68.105:3000
+```
 
 Se essa variável não for informada, o app usa os fallbacks definidos em src/shared/api/apiConfig.ts:
 
@@ -137,20 +141,20 @@ O app utiliza cache para melhorar a experiência e reduzir chamadas desnecessár
 
 ## Scripts
 
-powershell
+``` powershell
 npm run mock      # inicia o mock local da API
 npm run start     # inicia o Expo
 npm run android   # inicia o Expo para Android
 npm run ios       # inicia o Expo para iOS
 npm run web       # inicia o Expo para web
 npm run lint      # executa o lint do projeto
-
+```
 
 Para o fluxo principal de desenvolvimento com dev client, prefira:
 
-powershell
+``` powershell
 npx expo start --dev-client --clear
-
+```
 
 ## Colaboradores
 
