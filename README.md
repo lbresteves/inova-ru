@@ -16,7 +16,7 @@ O InovaRU é um aplicativo mobile criado para o Hackathon InovaRU UFMG. A propos
 
 O projeto foi pensado para induzir o comportamento de recarga antecipada e reduzir problemas recorrentes na fila, como espera excessiva, instabilidade de conexão no local e pagamentos feitos apenas no momento da refeição. Para isso, o app inclui notificações personalizáveis, configuradas por cada usuário de acordo com sua necessidade.
 
-Este repositório contém o frontend do aplicativo e um mock local da API. A API oficial deverá ser fornecida pela FUMP e substituir o mock futuramente.
+Este repositório contém o frontend mobile em Expo/React Native e uma API demo local em FastAPI. A API demo substitui o uso anterior do Mockoon e simula o contrato da API FUMP durante o desenvolvimento e a demonstração. Quando a API oficial da FUMP estiver disponível, o app deve apontar para a URL oficial mantendo o mesmo contrato de autenticação, saldo, pagamentos e históricos.
 
 ## Contexto do Hackathon
 
@@ -24,60 +24,36 @@ O Hackathon InovaRU faz parte de uma atividade de extensão e desenvolvimento te
 
 Segundo o edital, o objetivo geral é desenvolver um protótipo de aplicativo móvel integrado a um sistema de recarga e débito de créditos para uso exclusivo nos Restaurantes Universitários da UFMG. O impacto esperado é combater longas filas, otimizar o tempo dos estudantes e modernizar o acesso às refeições utilizando o registro acadêmico.
 
-A solução deve consumir uma API RESTful da FUMP com fluxo de autenticação, consulta de saldo e geração de pagamentos via PIX (MercadoPago). O backend institucional previsto no edital é Node.js com Express.js, conectado a um banco SQL Server. Neste projeto, implementamos o app mobile e um mock local da API para viabilizar o desenvolvimento e a demonstração enquanto a API final não está disponível.
+A solução consome uma API RESTful compatível com o contrato da FUMP, com fluxo de autenticação, consulta de saldo, geração de pagamentos via PIX, polling do status do pagamento e consulta de históricos. O backend institucional previsto é Node.js com Express.js e banco SQL Server; neste repositório, usamos uma API demo em FastAPI para viabilizar o desenvolvimento local enquanto a API institucional não está disponível.
 
 ## Funcionalidades
 
-- Login de usuário
+- Login de usuário por CPF e senha
 - Consulta de saldo de créditos
-- Recarga de saldo
-- Geração de pagamento via PIX
-- Acompanhamento de status do pagamento
-- Histórico de recargas
-- Histórico de refeições
-- Cardápio dos Restaurantes Universitários
+- Consulta dos dados do consumidor e situação cadastral
+- Recarga de saldo via PIX
+- Geração de QR Code e código PIX copia-e-cola
+- Acompanhamento de status do pagamento por polling
+- Confirmação de crédito somente após retorno da API
+- Histórico de recargas com paginação
+- Histórico de refeições com paginação e filtros
+- Cardápio dos Restaurantes Universitários com dados locais provisórios
 - Configuração de notificações personalizáveis
 - Monitoramento de saldo baixo
-- Cache local e cache de requisições para melhorar a experiência do usuário
-
-## Screenshots
-
-A jornada principal do app — login, consulta de saldo, pagamento via PIX e confirmação da recarga:
-
-<p align="center">
-  <img src="./docs/screenshots/login.png" width="200" />
-  <img src="./docs/screenshots/home.png" width="200" />
-  <img src="./docs/screenshots/pagamento_pix.png" width="200" />
-  <img src="./docs/screenshots/sucesso.png" width="200" />
-</p>
-
-<details>
-<summary>Ver todas as telas</summary>
-
-<p align="center">
-  <img src="./docs/screenshots/recarregar.png" width="200" />
-  <img src="./docs/screenshots/falha.png" width="200" />
-  <img src="./docs/screenshots/hist_recargas.png" width="200" />
-  <img src="./docs/screenshots/hist_refeicoes.png" width="200" />
-  <img src="./docs/screenshots/cardapio.png" width="200" />
-  <img src="./docs/screenshots/configuracoes.png" width="200" />
-  <img src="./docs/screenshots/sobre.png" width="200" />
-</p>
-
-</details>
+- Cache local, sessão segura e cache de requisições para melhorar a experiência do usuário
 
 ## Tecnologias
 
-**Core**
+**Aplicativo mobile**
 - Expo 54
 - React Native 0.81
 - TypeScript
 - Expo Router
 
 **Dados e estado**
-- React Query (`@tanstack/react-query`) - cache, revalidação e paginação de dados remotos
-- Zustand - estado global da aplicação
-- AsyncStorage / Expo Secure Store - persistência local
+- React Query (`@tanstack/react-query`) - cache, revalidação, polling e paginação de dados remotos
+- Zustand - estado global da sessão
+- AsyncStorage / Expo Secure Store - persistência local e sessão segura
 
 **UI e estilização**
 - Emotion Native
@@ -87,8 +63,11 @@ A jornada principal do app — login, consulta de saldo, pagamento via PIX e con
 - Expo Notifications
 - Expo Background Task / Expo Task Manager
 
-**Ambiente de desenvolvimento**
-- Mockoon CLI - mock local da API
+**API demo local**
+- FastAPI
+- Uvicorn
+- PyJWT
+- Pytest
 
 ## Estrutura do projeto
 
@@ -97,118 +76,241 @@ app/                  Rotas do Expo Router
 src/_app/             Bootstrap, providers e layout raiz do app
 src/features/         Features da aplicação
 src/shared/           Componentes, tema, API, storage e utilitários compartilhados
-mock/api.json         Mock local da API usado durante desenvolvimento
-mock/README.md        Exemplos de endpoints disponíveis no mock
+backend/              API demo local em FastAPI
+docs/contract-fixtures/ Exemplos do contrato esperado da API
+docs/current-manual-flow.md Fluxo manual de teste do app
 ```
 
 ## Requisitos
 
 - Node.js instalado
 - npm instalado
+- Python 3.11+ instalado
 - Android Studio/emulador Android ou dispositivo físico Android
-- Dev client do Expo configurado no dispositivo/emulador
+- Expo Go ou dev client do Expo no dispositivo/emulador
 
-> O projeto usa `expo-dev-client`. Para rodar o app, utilize `npx expo start --dev-client --clear`.
+> Para testar recursos como tarefas em segundo plano e notificações de forma mais próxima ao ambiente real, prefira usar um dev client. Para testar o fluxo principal de login, saldo, recarga e históricos, Expo Go é suficiente na maior parte dos casos.
 
 ## Instalação
 
-Instale as dependências:
+Instale as dependências do app:
 
-```powershell
+```bash
 npm install
 ```
 
-## Rodando com o mock
+Crie o ambiente Python da API demo:
 
-O mock local usa Mockoon e fica em `mock/api.json`. Ele existe apenas para desenvolvimento e demonstração no hackathon. Futuramente, o app deve apontar para a API real da FUMP.
-
-Abra um terminal e rode o mock:
-
-```powershell
-npm run mock
+```bash
+python3 -m venv backend/.venv
+source backend/.venv/bin/activate
+pip install -e backend
 ```
 
-Em outro terminal, configure a URL da API e inicie o Expo:
+No Windows PowerShell:
 
 ```powershell
-$env:EXPO_PUBLIC_API_URL="http://192.168.68.105:3000"
+python -m venv backend/.venv
+.\backend\.venv\Scripts\Activate.ps1
+pip install -e backend
 ```
+
+## Rodando com a API demo FastAPI
+
+A API demo local substitui o mock antigo. Ela implementa as rotas oficiais consumidas pelo app e também expõe rotas `/demo` para preparar cenários de apresentação, como criar usuários, alterar saldo, registrar refeições, aprovar pagamentos, rejeitar pagamentos e invalidar sessões.
+
+Abra um terminal e rode a API demo:
+
+```bash
+npm run demo-api
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:3000
+```
+
+Verifique se a API está ativa:
+
+```bash
+curl http://localhost:3000/health
+```
+
+Resposta esperada:
+
+```json
+{
+  "ok": true,
+  "demo": true
+}
+```
+
+Em outro terminal, inicie o Expo apontando para a API demo.
+
+### Android emulador
+
+```bash
+EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 npx expo start --clear
+```
+
+### Celular físico com Expo Go
+
+O celular não consegue acessar `localhost` da sua máquina. Use o IP local do computador que está rodando a API.
+
+No Linux/macOS:
+
+```bash
+EXPO_PUBLIC_API_URL=http://<host-ip>:3000 npx expo start --clear --lan
+```
+
+No Windows PowerShell, substitua o IP pelo endereço IPv4 da sua máquina:
+
 ```powershell
-npx expo start --dev-client --clear
+$env:EXPO_PUBLIC_API_URL="http://<host-ip>:3000"
+npx expo start --clear --lan
 ```
 
-Se estiver usando outro computador, rede ou IP local, troque `192.168.68.105` pelo IP da máquina que está rodando o mock. O celular e o computador precisam estar na mesma rede.
+O celular e o computador precisam estar na mesma rede.
 
-**Como encontrar esse IP:**
+### iOS simulator ou web
 
-- **Windows:** rode `ipconfig` e procure o campo `Endereço IPv4` dentro da seção `Adaptador de Rede sem Fio Wi-Fi` (ou `Adaptador Ethernet`, se estiver usando cabo).
-- **macOS/Linux:** rode `ifconfig` e procure o campo `inet` na interface de rede correspondente (geralmente `en0` no Wi-Fi do macOS, ou `wlan0`/`eth0` no Linux).
+```bash
+EXPO_PUBLIC_API_URL=http://localhost:3000 npx expo start --clear
+```
 
 ### Usando `.env` local
 
-Como alternativa, você pode criar um arquivo `.env.development.local` na raiz do projeto:
+Como alternativa, crie um arquivo `.env.development.local` na raiz do projeto:
 
 ```env
-EXPO_PUBLIC_API_URL=http://192.168.68.105:3000
+EXPO_PUBLIC_API_URL=http://<host-ip>:3000
 ```
 
 Depois, inicie o Expo:
 
-```powershell
-npx expo start --dev-client --clear
+```bash
+npx expo start --clear
 ```
 
 Arquivos `.env*.local` estão no `.gitignore`, então essa configuração fica apenas na sua máquina.
 
-## API e mock
+## Usuários de demonstração
+
+Depois de iniciar ou resetar a API demo, estes usuários ficam disponíveis:
+
+| Situação | CPF | Senha | Comportamento esperado |
+|---|---|---|---|
+| Ativo | `12345678901` | `passkey123` | Pode consultar saldo, recarregar e visualizar históricos |
+| Bloqueado | `22222222222` | `passkey123` | Pode visualizar informações, mas recarga fica indisponível |
+| Inativo | `33333333333` | `passkey123` | Operações retornam indisponibilidade/consumidor não encontrado |
+
+Para resetar os dados da API demo:
+
+```bash
+curl -X POST http://localhost:3000/demo/reset
+```
+
+## API
 
 A URL base usada pelo app vem da variável:
 
 ```text
-EXPO_PUBLIC_API_URL=http://192.168.68.105:3000
+EXPO_PUBLIC_API_URL=http://localhost:3000
 ```
 
-Se essa variável não for informada, o app usa os fallbacks definidos em `src/shared/api/apiConfig.ts`:
-
-- Android: `http://10.0.2.2:3000`
-- Demais plataformas: `http://localhost:3000`
-
-Endpoints principais disponíveis no mock:
+### Endpoints oficiais consumidos pelo app
 
 - `POST /usuarios/login`
-- `GET /creditos/refeicoes`
-- `GET /creditos/recargas`
 - `GET /creditos/saldo`
 - `POST /creditos/pagamento`
 - `GET /creditos/pagamento/:paymentId/status`
+- `GET /creditos/recargas`
+- `GET /creditos/refeicoes`
 
-Quando a API oficial da FUMP estiver disponível, a expectativa é substituir a URL do mock pela URL real da API, mantendo os contratos definidos para autenticação, saldo, recargas e pagamentos.
+### Rotas demo para desenvolvimento
 
-## Cache
+As rotas `/demo` existem apenas para desenvolvimento local e demonstração. O aplicativo mobile não deve depender delas no fluxo normal.
+
+Exemplos úteis:
+
+- `POST /demo/reset`
+- `POST /demo/seed`
+- `POST /demo/users`
+- `PATCH /demo/users/:cpf/situation`
+- `POST /demo/users/:cpf/balance-adjustments`
+- `POST /demo/users/:cpf/meals`
+- `POST /demo/users/:cpf/sessions/invalidate`
+- `POST /demo/payments/:paymentId/approve`
+- `POST /demo/payments/:paymentId/credit`
+- `POST /demo/payments/:paymentId/reject`
+- `POST /demo/payments/:paymentId/cancel`
+- `POST /demo/payments/:paymentId/expire`
+
+## Testando o fluxo de recarga por terminal
+
+```bash
+BASE=http://localhost:3000
+
+curl -s -X POST "$BASE/demo/reset"
+
+TOKEN=$(curl -s -X POST "$BASE/usuarios/login" \
+  -H "Content-Type: application/json" \
+  -d '{"user":"12345678901","password":"passkey123"}' \
+  | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])')
+
+PAYMENT_RESPONSE=$(curl -s -X POST "$BASE/creditos/pagamento" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"valor":"10.00"}')
+
+PAYMENT_ID=$(echo "$PAYMENT_RESPONSE" \
+  | python3 -c 'import sys,json; print(json.load(sys.stdin)["payment_id"])')
+
+curl -s "$BASE/creditos/pagamento/$PAYMENT_ID/status" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s -X POST "$BASE/demo/payments/$PAYMENT_ID/approve"
+curl -s -X POST "$BASE/demo/payments/$PAYMENT_ID/credit"
+
+curl -s "$BASE/creditos/recargas?page=1&perPage=10" \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -s "$BASE/creditos/saldo" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+O saldo só deve ser alterado depois que o pagamento for aprovado e creditado pela API demo. O app não soma saldo localmente.
+
+## Cache e persistência
 
 O app utiliza cache para melhorar a experiência e reduzir chamadas desnecessárias:
 
-- React Query mantém dados de saldo, pagamento e status de pagamento em memória.
-- O saldo de recarga usa `staleTime: Infinity`, evitando refetch automático enquanto o app considera o dado válido.
-- Após um pagamento aprovado, o app atualiza o saldo em cache localmente.
-- Configurações de notificação e monitoramento de saldo usam AsyncStorage para persistência local.
+- React Query mantém dados de saldo, pagamentos, status de pagamento e históricos.
+- A sessão autenticada é persistida em armazenamento seguro.
+- O pagamento ativo é persistido para permitir recuperação após reload ou fechamento do app.
+- Após pagamento aprovado e creditado, o app invalida os dados de saldo e histórico de recargas para buscar o estado real na API.
+- Configurações de notificação e monitoramento de saldo usam persistência local.
 
 ## Scripts
 
-```powershell
-npm run mock      # inicia o mock local da API
-npm run start     # inicia o Expo
-npm run android   # inicia o Expo para Android
-npm run ios       # inicia o Expo para iOS
-npm run web       # inicia o Expo para web
-npm run lint      # executa o lint do projeto
+```bash
+npm run start          # inicia o Expo
+npm run android        # inicia o Expo para Android
+npm run ios            # inicia o Expo para iOS
+npm run web            # inicia o Expo para web
+npm run lint           # executa o lint do projeto
+npm run typecheck      # executa checagem TypeScript
+npm run demo-api       # inicia a API demo FastAPI na porta 3000
+npm run demo-api:test  # executa testes da API demo
 ```
 
-Para o fluxo principal de desenvolvimento com dev client, prefira:
+## Observações de desenvolvimento
 
-```powershell
-npx expo start --dev-client --clear
-```
+- O Cardápio ainda usa conteúdo local/hardcoded. A intenção é que esse conteúdo seja fornecido futuramente pela API demo ou por outra fonte definida pelo projeto.
+- As rotas `/demo` devem ser usadas apenas para preparar cenários de teste e apresentação.
+- A API demo é stateful em memória. Ao reiniciar o processo ou chamar `/demo/reset`, os dados voltam ao estado inicial.
+- Em produção, o app deve apontar para a API oficial da FUMP e usar HTTPS.
 
 ## Licença
 
