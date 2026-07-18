@@ -1,3 +1,11 @@
+import {
+  assertRecord,
+  createContractError,
+  readBoolean,
+  readDateString,
+  readOptionalString,
+  readString,
+} from "@shared/api";
 import type {
   CreatePaymentResponseDto,
   PaymentStatusResponseDto,
@@ -10,28 +18,35 @@ import type {
 
 export function mapPaymentStatus(value: string): PaymentStatus {
   switch (value.trim().toLocaleLowerCase("en-US")) {
+    case "pending":
+      return "pending";
     case "approved":
-    case "paid":
-    case "success":
       return "approved";
     case "rejected":
-    case "failed":
       return "rejected";
     case "cancelled":
-    case "canceled":
       return "cancelled";
     case "expired":
       return "expired";
     default:
-      return "pending";
+      throw createContractError("Status de pagamento desconhecido.", value);
   }
 }
 
-function createQrCodeUri(base64?: string): string | null {
-  const value = base64?.trim();
+function readPaymentId(record: Record<string, unknown>): string {
+  const value = record.payment_id;
+  if ((typeof value === "string" && value.trim()) || typeof value === "number") {
+    return String(value);
+  }
+
+  throw createContractError("ID do pagamento inválido.", record);
+}
+
+function createQrCodeUri(base64: string): string {
+  const value = base64.trim();
 
   if (!value) {
-    return null;
+    throw createContractError("QR Code base64 ausente.", base64);
   }
 
   return value.startsWith("data:image/")
@@ -39,39 +54,33 @@ function createQrCodeUri(base64?: string): string | null {
     : `data:image/png;base64,${value}`;
 }
 
-function resolveExpiration(expiration?: string): string {
-  const parsedExpiration = expiration ? new Date(expiration) : null;
-
-  if (parsedExpiration && !Number.isNaN(parsedExpiration.getTime())) {
-    return parsedExpiration.toISOString();
-  }
-
-  return new Date(Date.now() + 5 * 60 * 1000).toISOString();
-}
-
 export function mapCreatedPayment(
   dto: CreatePaymentResponseDto,
   amount: number,
 ): CreatedPayment {
+  const root = assertRecord(dto, "payment");
+
   return {
     amount,
-    balanceCredited: false,
-    copyPasteCode: dto.qr_code,
-    expiresAt: resolveExpiration(dto.expiration),
-    id: String(dto.payment_id),
-    qrCodeUri: createQrCodeUri(dto.qr_code_base64),
-    status: mapPaymentStatus(dto.status),
-    ticketUrl: dto.ticket_url?.trim() || null,
+    copyPasteCode: readString(root, "qr_code"),
+    expiresAt: readDateString(root, "expiration"),
+    id: readPaymentId(root),
+    qrCodeUri: createQrCodeUri(readString(root, "qr_code_base64")),
+    status: mapPaymentStatus(readString(root, "status")),
+    ticketUrl: readString(root, "ticket_url"),
   };
 }
 
 export function mapPaymentStatusResponse(
   dto: PaymentStatusResponseDto,
 ): PaymentStatusResult {
+  const root = assertRecord(dto, "paymentStatus");
+  const statusDetail = readOptionalString(root, "status_detail");
+
   return {
-    credited: dto.creditado === true,
-    id: String(dto.payment_id),
-    status: mapPaymentStatus(dto.status),
-    statusDetail: dto.status_detail?.trim() || null,
+    credited: readBoolean(root, "creditado", false),
+    id: readPaymentId(root),
+    status: mapPaymentStatus(readString(root, "status")),
+    statusDetail: statusDetail?.trim() || null,
   };
 }

@@ -6,9 +6,18 @@ export type SessionUser = {
 };
 
 export type AuthSession = {
+  expiresAt: string | null;
+  subjectCpf: string;
   token: string;
   user: SessionUser;
 };
+
+export type AnonymousReason =
+  | "explicit"
+  | "expired"
+  | "invalid"
+  | "storage-error"
+  | "unknown";
 
 export type SessionStatus =
   | "initializing"

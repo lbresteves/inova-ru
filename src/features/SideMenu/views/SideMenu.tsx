@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MenuButton } from "@shared/components";
 import { type Href, useRouter } from "expo-router";
 import { Animated, Easing, Modal, useWindowDimensions } from "react-native";
+import { logout } from "@features/Auth";
 
 import {
   FooterContainer,
@@ -34,13 +35,15 @@ type MenuOption = {
 const RECHARGE_ROUTE = "/main/recharge" as Href;
 const RECHARGE_HISTORY_ROUTE = "/main/recharge-history" as Href;
 const MEAL_HISTORY_ROUTE = "/main/meal-history" as Href;
-const SETTINGS_ROUTE = "/settings" as Href;
+const SETTINGS_ROUTE = "/main/settings" as Href;
+const LOGIN_ROUTE = "/auth/login" as Href;
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const animationProgress = useRef(new Animated.Value(0)).current;
   const [shouldRender, setShouldRender] = useState(visible);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -83,6 +86,21 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     }
 
     onClose();
+  }
+
+  async function handleLogout() {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+    try {
+      onClose();
+      await logout();
+      router.replace(LOGIN_ROUTE);
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (
@@ -130,11 +148,10 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
               <MenuItemButton
                 accessibilityLabel="Sair da conta"
                 accessibilityRole="button"
-                onPress={() => {
-                  onClose();
-                }}
+                disabled={isLoggingOut}
+                onPress={() => void handleLogout()}
               >
-                <MenuItemText>Sair</MenuItemText>
+                <MenuItemText>{isLoggingOut ? "Saindo..." : "Sair"}</MenuItemText>
               </MenuItemButton>
             </FooterContainer>
           </MenuContainer>

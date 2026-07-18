@@ -1,0 +1,6 @@
+{
+  "payment_id": 123456789,
+  "status": "rejected",
+  "status_detail": "rejected_by_bank",
+  "creditado": false
+}

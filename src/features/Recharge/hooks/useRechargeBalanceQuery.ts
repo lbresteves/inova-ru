@@ -1,12 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-
-import { rechargeRepository } from "../services/rechargeServices";
-import { rechargeKeys } from "../utils/rechargeKeys";
+import { useCreditAccountQuery } from "@features/CreditAccount";
 
 export function useRechargeBalanceQuery() {
-  return useQuery({
-    queryKey: rechargeKeys.balance(),
-    queryFn: ({ signal }) => rechargeRepository.getBalance(signal),
-    staleTime: Number.POSITIVE_INFINITY,
-  });
+  const accountQuery = useCreditAccountQuery();
+
+  return {
+    ...accountQuery,
+    data: accountQuery.data?.balance,
+  };
 }

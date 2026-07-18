@@ -1,0 +1,9 @@
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.demo.signature",
+  "usuario": {
+    "nome": "JOÃO DA SILVA",
+    "email": "joao@ufmg.br",
+    "isAluno": 1,
+    "isColaborador": 0
+  }
+}

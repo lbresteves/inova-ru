@@ -1,6 +1,1 @@
-export type RechargeBalanceResponseDto = {
-  saldo: {
-    credito_disponivel: number;
-    limite_recarga: number;
-  };
-};
+export type { CreditAccountResponseDto as RechargeBalanceResponseDto } from "@features/CreditAccount";

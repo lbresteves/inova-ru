@@ -7,9 +7,11 @@ export function validateLogin(form: LoginForm): LoginErrors {
   const institutionalId = form.institutionalId.trim();
 
   if (!institutionalId) {
-    errors.institutionalId = "Informe seu número de usuário.";
+    errors.institutionalId = "Informe seu CPF.";
   } else if (!/^\d+$/.test(institutionalId)) {
     errors.institutionalId = "Use somente números.";
+  } else if (!/^\d{11}$/.test(institutionalId)) {
+    errors.institutionalId = "Informe um CPF com 11 números.";
   }
 
   if (!form.password.trim()) {

@@ -1,5 +1,1 @@
-export type HomeHeaderStatus =
-  | "Ativo"
-  | "Inativo"
-  | "Pendente"
-  | (string & {});
+export type HomeHeaderStatus = "Ativo" | "Inativo" | "Bloqueado" | "Pendente";

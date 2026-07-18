@@ -6,14 +6,14 @@ export type CreatePaymentResponseDto = {
   payment_id: string | number;
   status: string;
   qr_code: string;
-  qr_code_base64?: string;
-  ticket_url?: string;
-  expiration?: string;
+  qr_code_base64: string;
+  ticket_url: string;
+  expiration: string;
 };
 
 export type PaymentStatusResponseDto = {
   payment_id: string | number;
   status: string;
-  status_detail?: string;
-  creditado?: boolean;
+  status_detail?: string | null;
+  creditado: boolean;
 };

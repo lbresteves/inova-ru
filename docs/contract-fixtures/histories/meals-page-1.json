@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "data_hora": "2026-04-25T12:05:33-03:00",
+      "filial": {
+        "codigo": "0003",
+        "nome": "RU Setorial 1"
+      },
+      "quantidade": 1,
+      "valor_total": 2.4,
+      "gratuidade": false,
+      "tipo_consumidor": "ESTUDANTE REGULAR"
+    }
+  ],
+  "pagination": {
+    "total": 142,
+    "currentPage": 1,
+    "perPage": 20,
+    "lastPage": 8
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "consumidor": {
+    "nome": "MARIA COSTA",
+    "tipo_consumidor": {
+      "codigo": "01",
+      "descricao": "ESTUDANTE REGULAR"
+    },
+    "centro_custo": {
+      "tipo": "Graduação",
+      "descricao": "CIÊNCIA DA COMPUTAÇÃO"
+    },
+    "situacao": "B"
+  },
+  "saldo": {
+    "credito_disponivel": 12.0,
+    "limite_recarga": 500.0
+  }
+}

@@ -1,10 +1,10 @@
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 
-import { ApiError } from "@shared/api";
+import { getApiErrorMessage } from "@shared/api";
 import { AppButton, HeaderBack } from "@shared/components";
 import { useCreatePaymentMutation } from "../hooks/useCreatePaymentMutation";
-import { useRechargeBalanceQuery } from "../hooks/useRechargeBalanceQuery";
+import { useCreditAccountQuery } from "@features/CreditAccount";
 import type { RechargePreset } from "../types/Recharge";
 import {
   currencyInputToNumber,
@@ -34,7 +34,9 @@ const PRESETS: RechargePreset[] = [10, 20, 50, 100];
 
 export default function RechargeScreen() {
   const router = useRouter();
-  const balanceQuery = useRechargeBalanceQuery();
+  const accountQuery = useCreditAccountQuery();
+  const balance = accountQuery.data?.balance;
+  const canRecharge = accountQuery.data?.permissions.canRecharge !== false;
   const createPaymentMutation = useCreatePaymentMutation();
   const [selectedPreset, setSelectedPreset] =
     useState<RechargePreset | null>(50);
@@ -43,16 +45,13 @@ export default function RechargeScreen() {
   const formattedValue = formatCurrencyInput(digits);
   const amount = currencyInputToNumber(formattedValue);
   const validationError = useMemo(
-    () => validateRechargeAmount(amount, balanceQuery.data),
-    [amount, balanceQuery.data],
+    () => validateRechargeAmount(amount, balance),
+    [amount, balance],
   );
 
-  const requestError =
-    createPaymentMutation.error instanceof ApiError
-      ? createPaymentMutation.error.message
-      : createPaymentMutation.isError
-        ? "Não foi possível gerar o PIX. Tente novamente."
-        : undefined;
+  const requestError = createPaymentMutation.isError
+    ? getApiErrorMessage(createPaymentMutation.error)
+    : undefined;
 
   function selectPreset(value: RechargePreset) {
     setSelectedPreset(value);
@@ -64,7 +63,7 @@ export default function RechargeScreen() {
     if (
       createPaymentMutation.isPending ||
       validationError ||
-      !balanceQuery.data
+      !balance || !canRecharge
     ) {
       return;
     }
@@ -123,27 +122,27 @@ export default function RechargeScreen() {
           <Notice>
             <NoticeText>
               {`O saldo após a recarga não pode ultrapassar o limite de ${formatCurrency(
-                balanceQuery.data?.limit ?? 500,
+                balance?.limit ?? 500,
               )}.`}
             </NoticeText>
           </Notice>
 
-          {balanceQuery.data ? (
+          {accountQuery.data ? (
             <BalanceText>
-              Saldo atual: {formatCurrency(balanceQuery.data.current)}
+              Saldo atual: {formatCurrency(accountQuery.data.balance.current)}
             </BalanceText>
-          ) : balanceQuery.isError ? (
-            <ErrorText>
-              Não foi possível consultar o saldo. Reabra esta tela para tentar
-              novamente.
-            </ErrorText>
+          ) : accountQuery.isError ? (
+            <ErrorText>{getApiErrorMessage(accountQuery.error)}</ErrorText>
           ) : (
             <BalanceText>Consultando saldo atual...</BalanceText>
           )}
+          {!canRecharge ? (
+            <ErrorText>Recargas estão indisponíveis para este consumidor.</ErrorText>
+          ) : null}
           {requestError ? <ErrorText>{requestError}</ErrorText> : null}
           <ButtonArea>
             <AppButton
-              disabled={Boolean(validationError) || !balanceQuery.data}
+              disabled={Boolean(validationError) || !balance || !canRecharge}
               label="Gerar PIX"
               loading={createPaymentMutation.isPending}
               onPress={() => void createPayment()}
