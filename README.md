@@ -77,8 +77,6 @@ src/_app/             Bootstrap, providers e layout raiz do app
 src/features/         Features da aplicação
 src/shared/           Componentes, tema, API, storage e utilitários compartilhados
 backend/              API demo local em FastAPI
-docs/contract-fixtures/ Exemplos do contrato esperado da API
-docs/current-manual-flow.md Fluxo manual de teste do app
 ```
 
 ## Requisitos
@@ -117,7 +115,7 @@ pip install -e backend
 
 ## Rodando com a API demo FastAPI
 
-A API demo local substitui o mock antigo. Ela implementa as rotas oficiais consumidas pelo app e também expõe rotas `/demo` para preparar cenários de apresentação, como criar usuários, alterar saldo, registrar refeições, aprovar pagamentos, rejeitar pagamentos e invalidar sessões.
+A API demo implementa as rotas oficiais consumidas pelo app e também expõe rotas `/demo` para preparar cenários de apresentação, como criar usuários, alterar saldo, registrar refeições, aprovar pagamentos, rejeitar pagamentos e invalidar sessões.
 
 Abra um terminal e rode a API demo:
 
@@ -178,22 +176,6 @@ O celular e o computador precisam estar na mesma rede.
 ```bash
 EXPO_PUBLIC_API_URL=http://localhost:3000 npx expo start --clear
 ```
-
-### Usando `.env` local
-
-Como alternativa, crie um arquivo `.env.development.local` na raiz do projeto:
-
-```env
-EXPO_PUBLIC_API_URL=http://<host-ip>:3000
-```
-
-Depois, inicie o Expo:
-
-```bash
-npx expo start --clear
-```
-
-Arquivos `.env*.local` estão no `.gitignore`, então essa configuração fica apenas na sua máquina.
 
 ## Usuários de demonstração
 
@@ -304,13 +286,6 @@ npm run typecheck      # executa checagem TypeScript
 npm run demo-api       # inicia a API demo FastAPI na porta 3000
 npm run demo-api:test  # executa testes da API demo
 ```
-
-## Observações de desenvolvimento
-
-- O Cardápio ainda usa conteúdo local/hardcoded. A intenção é que esse conteúdo seja fornecido futuramente pela API demo ou por outra fonte definida pelo projeto.
-- As rotas `/demo` devem ser usadas apenas para preparar cenários de teste e apresentação.
-- A API demo é stateful em memória. Ao reiniciar o processo ou chamar `/demo/reset`, os dados voltam ao estado inicial.
-- Em produção, o app deve apontar para a API oficial da FUMP e usar HTTPS.
 
 ## Licença
 
