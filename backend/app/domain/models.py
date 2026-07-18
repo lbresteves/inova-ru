@@ -47,14 +47,6 @@ class User:
 
 
 @dataclass
-class Session:
-    jti: str
-    cpf: str
-    expires_at: datetime
-    invalidated: bool = False
-
-
-@dataclass
 class Payment:
     payment_id: int
     owner_cpf: str
@@ -100,6 +92,7 @@ class DemoState:
     recharges: list[RechargeHistoryItem] = field(default_factory=list)
     meals: list[MealHistoryItem] = field(default_factory=list)
     invalidated_jtis: set[str] = field(default_factory=set)
+    issued_jtis_by_cpf: dict[str, set[str]] = field(default_factory=dict)
     next_payment_id: int = 123456789
     next_recharge_id: int = 1
     next_meal_id: int = 1

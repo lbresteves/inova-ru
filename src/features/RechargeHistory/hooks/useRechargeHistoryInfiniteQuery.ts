@@ -34,6 +34,6 @@ export function useRechargeHistoryInfiniteQuery(filters: RechargeHistoryFilters)
         perPage: PAGE_SIZE,
         signal,
       }),
-    queryKey: rechargeHistoryKeys.list(session?.subjectCpf, filters),
+    queryKey: rechargeHistoryKeys.list(session?.subjectCpf, filters, PAGE_SIZE),
   });
 }

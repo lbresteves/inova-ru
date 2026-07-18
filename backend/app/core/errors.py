@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+logger = logging.getLogger("inovaru.demo_api")
 
 
 class ApiException(Exception):
@@ -25,6 +30,18 @@ def register_error_handlers(app: FastAPI) -> None:
     async def handle_validation_error(_: Request, __: RequestValidationError) -> JSONResponse:
         return error_response(422, "Dados inválidos na requisição.")
 
+    @app.exception_handler(StarletteHTTPException)
+    async def handle_http_exception(_: Request, exc: StarletteHTTPException) -> JSONResponse:
+        messages = {
+            404: "Recurso não encontrado.",
+            405: "Método não permitido.",
+        }
+        message = messages.get(exc.status_code)
+        if message is None:
+            message = exc.detail if isinstance(exc.detail, str) else "Não foi possível concluir a solicitação."
+        return error_response(exc.status_code, message, dict(exc.headers or {}))
+
     @app.exception_handler(Exception)
-    async def handle_unexpected_error(_: Request, __: Exception) -> JSONResponse:
+    async def handle_unexpected_error(request: Request, exc: Exception) -> JSONResponse:
+        logger.exception("Unexpected demo API error on %s %s", request.method, request.url.path, exc_info=exc)
         return error_response(500, "Erro interno do servidor.")

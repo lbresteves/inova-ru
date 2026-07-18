@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { authSessionStorage } from "../services/authServices";
 import { useSessionStore } from "../store/sessionStore";
-import { isSessionExpired } from "../utils/jwt";
 
 export function useSessionBootstrap() {
   const status = useSessionStore((state) => state.status);
@@ -19,21 +18,13 @@ export function useSessionBootstrap() {
 
     void authSessionStorage
       .getSession()
-      .then(async (session) => {
+      .then((session) => {
         if (!active) {
           return;
         }
 
         if (!session) {
           setAnonymous("explicit");
-          return;
-        }
-
-        if (isSessionExpired(session.expiresAt)) {
-          await authSessionStorage.removeSession();
-          if (active) {
-            setAnonymous("expired");
-          }
           return;
         }
 

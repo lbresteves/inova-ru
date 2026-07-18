@@ -20,7 +20,7 @@ export type Consumer = {
 
 export type Balance = {
   current: number;
-  limit: number;
+  maxRechargeAmount: number;
 };
 
 export type CreditAccount = {

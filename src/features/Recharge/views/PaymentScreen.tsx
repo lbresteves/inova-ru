@@ -1,4 +1,5 @@
 import { useTheme } from "@emotion/react";
+import { useSessionStore } from "@features/Auth";
 import { useCreditAccountQuery, creditAccountKeys } from "@features/CreditAccount";
 import { rechargeHistoryKeys } from "@features/RechargeHistory";
 import { getApiErrorMessage } from "@shared/api";
@@ -75,7 +76,6 @@ function resolveFlowStatus(
   status: PaymentStatus,
   credited: boolean,
   isTimedOut: boolean,
-  isExpiredByClock: boolean,
 ): PaymentFlowStatus {
   if (isTimedOut) {
     return "pollTimedOut";
@@ -92,7 +92,7 @@ function resolveFlowStatus(
   if (status === "cancelled") {
     return "cancelled";
   }
-  if (status === "expired" || isExpiredByClock) {
+  if (status === "expired") {
     return "expired";
   }
   return "pending";
@@ -102,6 +102,7 @@ export default function PaymentScreen() {
   const router = useRouter();
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const session = useSessionStore((state) => state.session);
   const params = useLocalSearchParams<{ paymentId?: string | string[] }>();
   const paymentId = readParam(params.paymentId);
   const defaultPollingStartedAt = useRef(new Date().toISOString());
@@ -124,7 +125,6 @@ export default function PaymentScreen() {
     status,
     isCredited,
     statusQuery.isTimedOut,
-    Boolean(payment && remainingSeconds === 0),
   );
 
   useEffect(() => {
@@ -137,6 +137,26 @@ export default function PaymentScreen() {
     void queryClient.invalidateQueries({ queryKey: creditAccountKeys.all });
     void queryClient.invalidateQueries({ queryKey: rechargeHistoryKeys.all });
   }, [flowStatus, paymentId, queryClient]);
+
+  useEffect(() => {
+    if (!session?.subjectCpf || !statusQuery.data) {
+      return;
+    }
+
+    void activePaymentStorage.updateStatus(
+      session.subjectCpf,
+      paymentId,
+      statusQuery.data.status,
+    );
+  }, [paymentId, session?.subjectCpf, statusQuery.data]);
+
+  useEffect(() => {
+    if (!["rejected", "cancelled", "expired"].includes(flowStatus)) {
+      return;
+    }
+
+    void activePaymentStorage.remove();
+  }, [flowStatus]);
 
   useEffect(() => {
     if (!copyFeedback) {

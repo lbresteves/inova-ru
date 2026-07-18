@@ -32,6 +32,9 @@ class RateLimiter:
             )
         bucket.count += 1
 
+    def reset(self) -> None:
+        self._buckets.clear()
+
 
 rate_limiter = RateLimiter()
 

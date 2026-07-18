@@ -2,7 +2,7 @@ export type RechargePreset = 10 | 20 | 50 | 100;
 
 export type RechargeBalance = {
   current: number;
-  limit: number;
+  maxRechargeAmount: number;
 };
 
 export type PaymentStatus =
@@ -23,6 +23,7 @@ export type CreatedPayment = {
 };
 
 export type ActivePayment = CreatedPayment & {
+  schemaVersion: 1;
   ownerCpf: string;
   pollingStartedAt: string;
 };

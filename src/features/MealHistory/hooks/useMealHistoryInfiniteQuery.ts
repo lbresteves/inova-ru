@@ -31,6 +31,6 @@ export function useMealHistoryInfiniteQuery(filters: MealHistoryFilters) {
         perPage: PAGE_SIZE,
         signal,
       }),
-    queryKey: mealHistoryKeys.list(session?.subjectCpf, filters),
+    queryKey: mealHistoryKeys.list(session?.subjectCpf, filters, PAGE_SIZE),
   });
 }

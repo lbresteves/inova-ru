@@ -28,7 +28,7 @@ export const Instruction = styled(ThemedText)(({ theme }) => ({
 
 export const QrCard = styled.View(({ theme }) => ({
   alignItems: "center",
-  backgroundColor: "transparent",
+  backgroundColor: "#FFFFFF",
   borderColor: theme.colors.border,
   borderRadius: 16,
   borderWidth: 1,
