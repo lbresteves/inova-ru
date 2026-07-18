@@ -84,3 +84,25 @@ export const HistoryDescription = styled(ThemedText)(({ theme }) => ({
   fontSize: 12,
   lineHeight: 16,
 }));
+
+export const AccountNotice = styled.View(({ theme }) => ({
+  backgroundColor: theme.colors.background,
+  borderColor: theme.colors.border,
+  borderRadius: 12,
+  borderWidth: 1,
+  gap: 10,
+  padding: 14,
+}));
+
+export const AccountNoticeTitle = styled(ThemedText)(({ theme }) => ({
+  color: theme.colors.text,
+  fontSize: 14,
+  fontWeight: "700",
+  lineHeight: 20,
+}));
+
+export const AccountNoticeText = styled(ThemedText)(({ theme }) => ({
+  color: theme.colors.mutedText,
+  fontSize: 13,
+  lineHeight: 18,
+}));

@@ -8,14 +8,15 @@ export class AuthRepository {
   constructor(private readonly httpClient: IHttpClient) {}
 
   async login(form: LoginForm): Promise<AuthSession> {
+    const user = form.institutionalId.trim();
     const response = await this.httpClient.post<
       LoginRequestDto,
       LoginResponseDto
     >("/usuarios/login", {
       password: form.password,
-      user: form.institutionalId.trim(),
+      user,
     });
 
-    return mapLoginResponse(response);
+    return mapLoginResponse(response, user);
   }
 }

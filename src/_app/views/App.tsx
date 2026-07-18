@@ -4,9 +4,10 @@ import "@features/configurationScreen/tasks/balanceMonitorTask";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { configureNotificationHandler } from "@shared/notifications/configureNotificationHandler";
 import { darkColorSchema, lightColorSchema, theme } from "@shared/theme";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { appQueryClient } from "../query";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useInitializeApp } from "../hooks/useInitializeApp";
 import RouterSlot from "./RouterSlot";
@@ -19,7 +20,6 @@ export default function App() {
   }, []);
 
   const sessionStatus = useSessionBootstrap();
-  const [queryClient] = useState(() => new QueryClient());
 
   if (!loaded || sessionStatus === "initializing") {
     return null;
@@ -27,7 +27,7 @@ export default function App() {
 
   return (
     <ThemeProvider value={DarkTheme}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={appQueryClient}>
         <EmotionProvider
           theme={{
             ...theme,

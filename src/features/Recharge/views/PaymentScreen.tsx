@@ -1,17 +1,21 @@
+import { useTheme } from "@emotion/react";
+import { useCreditAccountQuery, creditAccountKeys } from "@features/CreditAccount";
+import { rechargeHistoryKeys } from "@features/RechargeHistory";
+import { getApiErrorMessage } from "@shared/api";
+import { AppButton, HeaderBack, IconSymbol } from "@shared/components";
+import { useQueryClient } from "@tanstack/react-query";
 import * as Clipboard from "expo-clipboard";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import * as WebBrowser from "expo-web-browser";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { useTheme } from "@emotion/react";
-import { useQueryClient } from "@tanstack/react-query";
-import { AppButton, HeaderBack, IconSymbol } from "@shared/components";
+import { activePaymentStorage } from "../services/ActivePaymentStorage";
+import { useActivePayment } from "../hooks/useActivePayment";
 import { usePaymentCountdown } from "../hooks/usePaymentCountdown";
-import { usePaymentStatusQuery } from "../hooks/usePaymentStatusQuery";
-import { useRechargeBalanceQuery } from "../hooks/useRechargeBalanceQuery";
-import { rechargeKeys } from "../utils/rechargeKeys";
-import type { CreatedPayment, PaymentStatus } from "../types/Recharge";
+import { usePaymentStatusPolling } from "../hooks/usePaymentStatusPolling";
+import type { PaymentFlowStatus, PaymentStatus } from "../types/Recharge";
 import { formatCurrency } from "../utils/currency";
-import { creditPaymentBalance } from "../utils/rechargeCache";
+import { rechargeKeys } from "../utils/rechargeKeys";
 import { PaymentQrCode } from "./components/PaymentQrCode";
 import { PaymentResult } from "./components/PaymentResult";
 import {
@@ -30,9 +34,10 @@ import {
   PollingError,
   PollingErrorText,
   QrCard,
-  QrUnavailable,
   Screen,
   Scroll,
+  TicketButton,
+  TicketButtonText,
   WaitingCard,
   WaitingDescription,
   WaitingTexts,
@@ -49,17 +54,48 @@ function formatCountdown(seconds: number): string {
   return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
-function failureCopy(status: PaymentStatus) {
+function failureCopy(flowStatus: PaymentFlowStatus, status?: PaymentStatus) {
+  if (flowStatus === "pollTimedOut") {
+    return "Não foi possível confirmar o pagamento em até 2 minutos. Você pode tentar consultar novamente ou gerar um novo PIX.";
+  }
+
   switch (status) {
     case "rejected":
       return "O pagamento foi recusado. Você pode gerar um novo pagamento.";
     case "cancelled":
       return "O pagamento foi cancelado. Você pode gerar um novo pagamento.";
     case "expired":
-      return "Não identificamos o pagamento no tempo esperado, ou o PIX expirou. Você pode gerar um novo pagamento.";
+      return "O PIX expirou sem confirmação. Você pode gerar um novo pagamento.";
     default:
       return "Não foi possível confirmar o pagamento. Você pode gerar um novo pagamento.";
   }
+}
+
+function resolveFlowStatus(
+  status: PaymentStatus,
+  credited: boolean,
+  isTimedOut: boolean,
+  isExpiredByClock: boolean,
+): PaymentFlowStatus {
+  if (isTimedOut) {
+    return "pollTimedOut";
+  }
+  if (status === "approved" && credited) {
+    return "credited";
+  }
+  if (status === "approved") {
+    return "approvedAwaitingCredit";
+  }
+  if (status === "rejected") {
+    return "rejected";
+  }
+  if (status === "cancelled") {
+    return "cancelled";
+  }
+  if (status === "expired" || isExpiredByClock) {
+    return "expired";
+  }
+  return "pending";
 }
 
 export default function PaymentScreen() {
@@ -68,35 +104,39 @@ export default function PaymentScreen() {
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{ paymentId?: string | string[] }>();
   const paymentId = readParam(params.paymentId);
-  const payment = queryClient.getQueryData<CreatedPayment>(
-    rechargeKeys.payment(paymentId),
+  const defaultPollingStartedAt = useRef(new Date().toISOString());
+  const { isLoading: isPaymentLoading, payment, storedPayment } =
+    useActivePayment(paymentId);
+  const balanceQuery = useCreditAccountQuery();
+  const pollingStartedAt =
+    storedPayment?.pollingStartedAt ?? defaultPollingStartedAt.current;
+  const statusQuery = usePaymentStatusPolling(
+    paymentId,
+    Boolean(payment),
+    pollingStartedAt,
   );
-  const balanceQuery = useRechargeBalanceQuery();
-  const statusQuery = usePaymentStatusQuery(paymentId, Boolean(payment));
   const remainingSeconds = usePaymentCountdown(payment?.expiresAt);
   const [copyFeedback, setCopyFeedback] = useState<string>();
 
   const status = statusQuery.data?.status ?? payment?.status ?? "pending";
   const isCredited = statusQuery.data?.credited === true;
-  const balanceAlreadyCredited = payment?.balanceCredited === true;
+  const flowStatus = resolveFlowStatus(
+    status,
+    isCredited,
+    statusQuery.isTimedOut,
+    Boolean(payment && remainingSeconds === 0),
+  );
 
   useEffect(() => {
-    if (
-      payment &&
-      status === "approved" &&
-      isCredited &&
-      !balanceAlreadyCredited
-    ) {
-      creditPaymentBalance(queryClient, paymentId);
+    if (flowStatus !== "credited") {
+      return;
     }
-  }, [
-    balanceAlreadyCredited,
-    isCredited,
-    payment,
-    paymentId,
-    queryClient,
-    status,
-  ]);
+
+    void activePaymentStorage.remove();
+    queryClient.removeQueries({ queryKey: rechargeKeys.payment(paymentId) });
+    void queryClient.invalidateQueries({ queryKey: creditAccountKeys.all });
+    void queryClient.invalidateQueries({ queryKey: rechargeHistoryKeys.all });
+  }, [flowStatus, paymentId, queryClient]);
 
   useEffect(() => {
     if (!copyFeedback) {
@@ -106,7 +146,6 @@ export default function PaymentScreen() {
     const timeout = setTimeout(() => setCopyFeedback(undefined), 2_000);
     return () => clearTimeout(timeout);
   }, [copyFeedback]);
-  const creditedBalance = balanceQuery.data?.current;
 
   async function copyPaymentCode() {
     if (!payment?.copyPasteCode) {
@@ -119,6 +158,24 @@ export default function PaymentScreen() {
     } catch {
       setCopyFeedback("Não foi possível copiar o código.");
     }
+  }
+
+  async function openTicketUrl() {
+    if (payment?.ticketUrl) {
+      await WebBrowser.openBrowserAsync(payment.ticketUrl);
+    }
+  }
+
+  if (isPaymentLoading) {
+    return (
+      <Screen>
+        <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
+        <PaymentContent>
+          <ActivityIndicator color={theme.colors.primary} size="small" />
+          <Hint>Carregando pagamento...</Hint>
+        </PaymentContent>
+      </Screen>
+    );
   }
 
   if (!payment) {
@@ -136,7 +193,7 @@ export default function PaymentScreen() {
     );
   }
 
-  if (status === "approved" && isCredited && balanceAlreadyCredited) {
+  if (flowStatus === "credited") {
     return (
       <Screen>
         <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
@@ -150,9 +207,9 @@ export default function PaymentScreen() {
           <BalanceCard>
             <BalanceLabel>Saldo atual</BalanceLabel>
             <BalanceValue>
-              {creditedBalance === undefined
-                ? "Saldo atualizado"
-                : formatCurrency(creditedBalance)}
+              {balanceQuery.data
+                ? formatCurrency(balanceQuery.data.balance.current)
+                : "Saldo em atualização"}
             </BalanceValue>
           </BalanceCard>
         </PaymentResult>
@@ -160,17 +217,17 @@ export default function PaymentScreen() {
     );
   }
 
-  if (["rejected", "cancelled", "expired"].includes(status)) {
+  if (["rejected", "cancelled", "expired", "pollTimedOut"].includes(flowStatus)) {
     return (
       <Screen>
         <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
         <PaymentResult
-          description={failureCopy(status)}
+          description={failureCopy(flowStatus, status)}
           onPrimaryPress={() => router.replace("/main/recharge")}
           onSecondaryPress={() => router.replace("/main/home")}
           primaryLabel="Tentar novamente"
           secondaryLabel="Voltar ao início"
-          title="Pagamento não detectado"
+          title={flowStatus === "pollTimedOut" ? "Tempo de confirmação excedido" : "Pagamento não confirmado"}
           type="failure"
         />
       </Screen>
@@ -187,54 +244,46 @@ export default function PaymentScreen() {
           </Instruction>
 
           <QrCard>
-            {payment.qrCodeUri ? (
-              <PaymentQrCode
-                color={theme.colors.primary}
-                qrCodeUri={payment.qrCodeUri}
-              />
-            ) : (
-              <QrUnavailable>
-                <Hint>QR Code indisponível.</Hint>
-              </QrUnavailable>
-            )}
+            <PaymentQrCode qrCodeUri={payment.qrCodeUri} />
           </QrCard>
 
           <AmountText>{formatCurrency(payment.amount)}</AmountText>
 
           <CodeBox>
-            <CodeText numberOfLines={1}>
-              {payment.copyPasteCode}
-            </CodeText>
+            <CodeText numberOfLines={1}>{payment.copyPasteCode}</CodeText>
             <CopyButton onPress={() => void copyPaymentCode()}>
               <IconSymbol color="primary" name="doc.on.doc" size={20} />
             </CopyButton>
           </CodeBox>
           {copyFeedback ? <CopyFeedback>{copyFeedback}</CopyFeedback> : null}
+
+          <TicketButton onPress={() => void openTicketUrl()}>
+            <TicketButtonText>Abrir link de pagamento</TicketButtonText>
+          </TicketButton>
+
           <WaitingCard>
             <ActivityIndicator color={theme.colors.primary} size="small" />
             <WaitingTexts>
               <WaitingTitle>
-                {status === "approved"
+                {flowStatus === "approvedAwaitingCredit"
                   ? "Pagamento aprovado..."
                   : "Aguardando pagamento..."}
               </WaitingTitle>
               <WaitingDescription>
-                {status === "approved"
-                  ? "Aguardando a confirmação do crédito."
+                {flowStatus === "approvedAwaitingCredit"
+                  ? "Aguardando a confirmação do crédito pelo servidor."
                   : "A confirmação é automática."}
               </WaitingDescription>
             </WaitingTexts>
           </WaitingCard>
 
-          <Expiration>
-            Expira em {formatCountdown(remainingSeconds)}
-          </Expiration>
-          <Hint>Não feche esta tela até a confirmação.</Hint>
+          <Expiration>Expira em {formatCountdown(remainingSeconds)}</Expiration>
+          <Hint>Você pode voltar depois; o pagamento será recuperado enquanto estiver válido.</Hint>
 
           {statusQuery.isError ? (
             <PollingError>
               <PollingErrorText>
-                Não foi possível consultar o pagamento.
+                {getApiErrorMessage(statusQuery.error)}
               </PollingErrorText>
               <AppButton
                 label="Consultar novamente"

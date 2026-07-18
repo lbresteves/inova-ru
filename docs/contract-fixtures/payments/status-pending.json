@@ -1,0 +1,6 @@
+{
+  "payment_id": 123456789,
+  "status": "pending",
+  "status_detail": null,
+  "creditado": false
+}

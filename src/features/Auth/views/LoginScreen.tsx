@@ -1,9 +1,10 @@
-import { ApiError } from "@shared/api";
+import { getApiErrorMessage } from "@shared/api";
 import { Logo } from "@shared/components";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Platform } from "react-native";
 import { useLoginMutation } from "../hooks/useLoginMutation";
+import { useSessionStore } from "../store/sessionStore";
 import type { LoginForm } from "../types/LoginForm";
 import {
   type LoginErrors,
@@ -35,6 +36,8 @@ export default function LoginScreen() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState<LoginErrors>({});
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const anonymousReason = useSessionStore((state) => state.anonymousReason);
+  const clearAnonymousReason = useSessionStore((state) => state.clearAnonymousReason);
 
   const canSubmit = Boolean(
     form.institutionalId.trim() && form.password.trim(),
@@ -61,12 +64,15 @@ export default function LoginScreen() {
     }
   }
 
-  const serverError =
-    loginMutation.error instanceof ApiError
-      ? loginMutation.error.message
-      : loginMutation.isError
-        ? "Não foi possível entrar. Tente novamente."
-        : undefined;
+  const sessionMessage = anonymousReason === "expired"
+    ? "Sua sessão expirou. Entre novamente."
+    : anonymousReason === "storage-error"
+      ? "Não foi possível restaurar sua sessão."
+      : undefined;
+
+  const serverError = loginMutation.isError
+    ? getApiErrorMessage(loginMutation.error)
+    : sessionMessage;
 
   return (
     <Screen>
@@ -79,7 +85,7 @@ export default function LoginScreen() {
             <BrandBlock>
               <Logo size={52} style={{ marginHorizontal: 0 }} />
               <ScreenTitle>Entrar</ScreenTitle>
-              <Subtitle>Acesse com seus dados institucionais</Subtitle>
+              <Subtitle>Acesse com CPF e senha institucional</Subtitle>
             </BrandBlock>
 
             <Form>
@@ -87,7 +93,7 @@ export default function LoginScreen() {
                 autoCapitalize="none"
                 errorText={errors.institutionalId}
                 keyboardType="number-pad"
-                label="Usuário institucional"
+                label="CPF"
                 onChangeText={(institutionalId) => {
                   setForm((current) => ({
                     ...current,
@@ -98,8 +104,9 @@ export default function LoginScreen() {
                     institutionalId: undefined,
                   }));
                   loginMutation.reset();
+                  clearAnonymousReason();
                 }}
-                placeholder="Número de usuário"
+                placeholder="Somente números"
                 value={form.institutionalId}
               />
               <LoginField
@@ -112,6 +119,7 @@ export default function LoginScreen() {
                     password: undefined,
                   }));
                   loginMutation.reset();
+                  clearAnonymousReason();
                 }}
                 onSubmitEditing={() => void submit()}
                 onToggleVisibility={() =>

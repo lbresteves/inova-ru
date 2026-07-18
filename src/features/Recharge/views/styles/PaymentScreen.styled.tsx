@@ -91,6 +91,24 @@ export const CopyFeedback = styled(ThemedText)(({ theme }) => ({
   marginTop: 6,
 }));
 
+
+export const TicketButton = styled.TouchableOpacity(({ theme }) => ({
+  alignItems: "center",
+  borderColor: theme.colors.border,
+  borderRadius: 12,
+  borderWidth: 1,
+  marginTop: 10,
+  paddingHorizontal: 14,
+  paddingVertical: 10,
+}));
+
+export const TicketButtonText = styled(ThemedText)(({ theme }) => ({
+  color: theme.colors.primary,
+  fontSize: 12,
+  fontWeight: "600",
+  lineHeight: 16,
+}));
+
 export const WaitingCard = styled.View(({ theme }) => ({
   alignItems: "center",
   alignSelf: "center",

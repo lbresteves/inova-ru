@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "valor": 50.0,
+      "metodo": "pix",
+      "status": "aprovado",
+      "data_hora": "2026-04-27T10:30:00-03:00"
+    },
+    {
+      "id": 2,
+      "valor": 30.0,
+      "metodo": "pix",
+      "status": "aprovado",
+      "data_hora": "2026-04-20T14:15:00-03:00"
+    }
+  ],
+  "pagination": {
+    "total": 15,
+    "currentPage": 1,
+    "perPage": 20,
+    "lastPage": 1
+  }
+}

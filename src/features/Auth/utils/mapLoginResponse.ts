@@ -1,14 +1,25 @@
+import { assertRecord, readNumber, readString } from "@shared/api";
 import type { AuthSession } from "../types/AuthSession";
 import type { LoginResponseDto } from "../types/LoginDto";
+import { readJwtExpiration, readJwtSubject } from "./jwt";
 
-export function mapLoginResponse(dto: LoginResponseDto): AuthSession {
+export function mapLoginResponse(
+  dto: LoginResponseDto,
+  subjectCpf: string,
+): AuthSession {
+  const root = assertRecord(dto, "login");
+  const token = readString(root, "token");
+  const usuario = assertRecord(root.usuario, "usuario");
+
   return {
-    token: dto.token,
+    expiresAt: readJwtExpiration(token),
+    subjectCpf: readJwtSubject(token) ?? subjectCpf,
+    token,
     user: {
-      email: dto.usuario.email,
-      isEmployee: dto.usuario.isColaborador === 1,
-      isStudent: dto.usuario.isAluno === 1,
-      name: dto.usuario.nome,
+      email: readString(usuario, "email", "usuario.email"),
+      isEmployee: readNumber(usuario, "isColaborador", "usuario.isColaborador") === 1,
+      isStudent: readNumber(usuario, "isAluno", "usuario.isAluno") === 1,
+      name: readString(usuario, "nome", "usuario.nome"),
     },
   };
 }

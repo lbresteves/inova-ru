@@ -1,104 +1,91 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, ListRenderItem, View } from "react-native";
+import type { ListRenderItem } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
+import { AppButton } from "../AppButton/AppButton";
 import { ThemedText } from "../ThemedText/ThemedText";
 
-interface TableContentProps<F> {
-    renderItem: ListRenderItem<any>;
-    fetchData: (page: number, filters: F) => Promise<any[]>;
-    keyExtractor?: (item: any, index: number) => string;
-    filters: F;
+interface TableContentProps<TItem> {
+  data: TItem[];
+  renderItem: ListRenderItem<TItem>;
+  keyExtractor: (item: TItem, index: number) => string;
+  emptyMessage: string;
+  errorMessage?: string;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  isInitialLoading?: boolean;
+  isRefreshing?: boolean;
+  onEndReached?: () => void;
+  onRefresh?: () => void;
+  onRetry?: () => void;
 }
 
-export function TableContent<F>({ renderItem, fetchData, keyExtractor, filters }: TableContentProps<F>) {
-    const [data, setData] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
+function TableMessage({
+  errorMessage,
+  isLoading,
+  message,
+  onRetry,
+}: {
+  errorMessage?: string;
+  isLoading?: boolean;
+  message: string;
+  onRetry?: () => void;
+}) {
+  if (isLoading) {
+    return <ActivityIndicator style={{ marginTop: 20 }} />;
+  }
 
-    const pageRef = useRef<number>(1);
-    const loadingRef = useRef(false); // espelha 'loading' pra uso em callbacks sem depender de closure desatualizada
-    const hasMoreRef = useRef(true);
-    // guarda a altura do container e do conteúdo pra saber se a lista "encheu" a tela
-    const containerHeightRef = useRef(0);
-    const contentHeightRef = useRef(0);
-    const filtersRef = useRef(filters);
+  return (
+    <View style={{ alignItems: "center", gap: 12, padding: 20 }}>
+      <ThemedText>{errorMessage ?? message}</ThemedText>
+      {errorMessage && onRetry ? (
+        <AppButton label="Tentar novamente" onPress={onRetry} variant="outlined" />
+      ) : null}
+    </View>
+  );
+}
 
-    const fetchMoreData = useCallback(async () => {
-        if (loadingRef.current || !hasMoreRef.current) return;
-
-        loadingRef.current = true;
-        setLoading(true);
-
-        const page = pageRef.current;
-
-        try {
-            const newData = await fetchData(page, filtersRef.current);
-
-            if (newData.length > 0) {
-                setData((prevData) => [...prevData, ...newData]);
-                pageRef.current = page + 1;
-            } else {
-                hasMoreRef.current = false;
-            }
-        } catch (err) {
-            console.error("fetchMoreData error:", err);
-        } finally {
-            loadingRef.current = false;
-            setLoading(false);
+export function TableContent<TItem>({
+  data,
+  emptyMessage,
+  errorMessage,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  isInitialLoading = false,
+  isRefreshing = false,
+  keyExtractor,
+  onEndReached,
+  onRefresh,
+  onRetry,
+  renderItem,
+}: TableContentProps<TItem>) {
+  return (
+    <FlatList
+      style={{ flex: 1 }}
+      contentContainerStyle={{ flexGrow: 1 }}
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
+      onEndReached={() => {
+        if (hasNextPage && !isFetchingNextPage) {
+          onEndReached?.();
         }
-    }, [fetchData]);
-
-    const checkIfShouldFetchMore = useCallback(() => {
-        if (
-            contentHeightRef.current > 0 &&
-            containerHeightRef.current > 0 &&
-            contentHeightRef.current <= containerHeightRef.current &&
-            hasMoreRef.current &&
-            !loadingRef.current
-        ) {
-            fetchMoreData();
-        }
-    }, [fetchMoreData]);
-
-    const handleLayout = (e: any) => {
-        containerHeightRef.current = e.nativeEvent.layout.height;
-        checkIfShouldFetchMore();
-    };
-
-    const handleContentSizeChange = (_width: number, height: number) => {
-        contentHeightRef.current = height;
-        checkIfShouldFetchMore();
-    };
-
-    // Sempre que os filtros mudarem (não importa o que há dentro deles),
-    // os dados acumulados ficam inválidos: reinicia a paginação do zero.
-    useEffect(() => {
-        filtersRef.current = filters;
-        pageRef.current = 1;
-        hasMoreRef.current = true;
-        contentHeightRef.current = 0; // força reavaliação com o próximo onContentSizeChange
-        setData([]);
-        fetchMoreData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(filters)]);
-
-    return (
-        <FlatList
-            key={JSON.stringify(filters)}  // força remontagem a cada mudança de filtro
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor ?? ((item, index) => item?.id?.toString() ?? index.toString())}
-            onLayout={handleLayout}
-            onContentSizeChange={handleContentSizeChange}
-            ItemSeparatorComponent={() => <View style={{ height: 5 }} />} // gap vertical 12
-            onEndReached={fetchMoreData}
-            onEndReachedThreshold={0.3}
-            ListEmptyComponent={
-                loading ? <ActivityIndicator style={{ marginTop: 20 }} /> : <ThemedText>Nenhuma recarga encontrada.</ThemedText>
-            }
-            ListFooterComponent={
-                loading && data.length > 0 ? <ActivityIndicator style={{ marginVertical: 16 }} /> : null
-            }
+      }}
+      onEndReachedThreshold={0.3}
+      onRefresh={onRefresh}
+      refreshing={isRefreshing}
+      ListEmptyComponent={
+        <TableMessage
+          errorMessage={errorMessage}
+          isLoading={isInitialLoading}
+          message={emptyMessage}
+          onRetry={onRetry}
         />
-    );
+      }
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <ActivityIndicator style={{ marginVertical: 16 }} />
+        ) : null
+      }
+    />
+  );
 }

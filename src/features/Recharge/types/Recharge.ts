@@ -17,10 +17,14 @@ export type CreatedPayment = {
   amount: number;
   status: PaymentStatus;
   copyPasteCode: string;
-  qrCodeUri: string | null;
-  ticketUrl: string | null;
+  qrCodeUri: string;
+  ticketUrl: string;
   expiresAt: string;
-  balanceCredited: boolean;
+};
+
+export type ActivePayment = CreatedPayment & {
+  ownerCpf: string;
+  pollingStartedAt: string;
 };
 
 export type PaymentStatusResult = {
@@ -29,3 +33,14 @@ export type PaymentStatusResult = {
   statusDetail: string | null;
   credited: boolean;
 };
+
+export type PaymentFlowStatus =
+  | "pending"
+  | "approvedAwaitingCredit"
+  | "credited"
+  | "rejected"
+  | "cancelled"
+  | "expired"
+  | "pollTimedOut"
+  | "networkError"
+  | "contractError";

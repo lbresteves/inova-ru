@@ -1,0 +1,8 @@
+{
+  "payment_id": 123456789,
+  "status": "pending",
+  "qr_code": "00020126580014br.gov.bcb.pix...",
+  "qr_code_base64": "iVBORw0KGgoAAAANSUhEUg...",
+  "ticket_url": "https://www.mercadopago.com.br/payments/123456789/ticket",
+  "expiration": "2026-04-27T11:00:00-03:00"
+}

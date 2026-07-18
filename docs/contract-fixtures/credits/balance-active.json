@@ -1,0 +1,18 @@
+{
+  "consumidor": {
+    "nome": "JOÃO DA SILVA",
+    "tipo_consumidor": {
+      "codigo": "01",
+      "descricao": "ESTUDANTE REGULAR"
+    },
+    "centro_custo": {
+      "tipo": "Graduação",
+      "descricao": "CIÊNCIA DA COMPUTAÇÃO"
+    },
+    "situacao": "A"
+  },
+  "saldo": {
+    "credito_disponivel": 45.5,
+    "limite_recarga": 500.0
+  }
+}
