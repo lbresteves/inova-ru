@@ -186,6 +186,14 @@ export default function PaymentScreen() {
     }
   }
 
+  function dismissToRecharge() {
+    router.dismissTo("/main/recharge");
+  }
+
+  function dismissToHome() {
+    router.dismissTo("/main/home");
+  }
+
   if (isPaymentLoading) {
     return (
       <Screen>
@@ -204,7 +212,7 @@ export default function PaymentScreen() {
         <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
         <PaymentResult
           description="Os dados deste pagamento não estão mais disponíveis neste dispositivo."
-          onPrimaryPress={() => router.replace("/main/recharge")}
+          onPrimaryPress={dismissToRecharge}
           primaryLabel="Gerar novo PIX"
           title="Pagamento não encontrado"
           type="failure"
@@ -219,7 +227,7 @@ export default function PaymentScreen() {
         <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
         <PaymentResult
           description={`Você adicionou ${formatCurrency(payment.amount)} em créditos.`}
-          onPrimaryPress={() => router.replace("/main/home")}
+          onPrimaryPress={dismissToHome}
           primaryLabel="Voltar"
           title="Recarga confirmada!"
           type="success"
@@ -243,8 +251,8 @@ export default function PaymentScreen() {
         <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
         <PaymentResult
           description={failureCopy(flowStatus, status)}
-          onPrimaryPress={() => router.replace("/main/recharge")}
-          onSecondaryPress={() => router.replace("/main/home")}
+          onPrimaryPress={dismissToRecharge}
+          onSecondaryPress={dismissToHome}
           primaryLabel="Tentar novamente"
           secondaryLabel="Voltar"
           title={flowStatus === "pollTimedOut" ? "Tempo de confirmação excedido" : "Pagamento não confirmado"}
