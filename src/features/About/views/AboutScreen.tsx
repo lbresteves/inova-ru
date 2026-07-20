@@ -22,7 +22,7 @@ export function AboutScreen() {
     <Container>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <HeaderBack title="About" onReturnPress={() => router.replace("/main/home")} />
+      <HeaderBack title="About" onReturnPress={() => router.dismissTo("/main/home")} />
 
       <ContentScroll contentContainerStyle={{ paddingBottom: 40 }}>
         <HeroSection>

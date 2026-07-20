@@ -197,7 +197,7 @@ export default function PaymentScreen() {
   if (isPaymentLoading) {
     return (
       <Screen>
-        <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
+        <HeaderBack title="Pagamento" onReturnPress={() => router.dismissTo("/main/home")} />
         <PaymentContent>
           <ActivityIndicator color={theme.colors.primary} size="small" />
           <Hint>Carregando pagamento...</Hint>
@@ -209,7 +209,7 @@ export default function PaymentScreen() {
   if (!payment) {
     return (
       <Screen>
-        <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
+        <HeaderBack title="Pagamento" onReturnPress={() => router.dismissTo("/main/home")} />
         <PaymentResult
           description="Os dados deste pagamento não estão mais disponíveis neste dispositivo."
           onPrimaryPress={dismissToRecharge}
@@ -224,7 +224,7 @@ export default function PaymentScreen() {
   if (flowStatus === "credited") {
     return (
       <Screen>
-        <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
+        <HeaderBack title="Pagamento" onReturnPress={() => router.dismissTo("/main/home")} />
         <PaymentResult
           description={`Você adicionou ${formatCurrency(payment.amount)} em créditos.`}
           onPrimaryPress={dismissToHome}
@@ -248,7 +248,7 @@ export default function PaymentScreen() {
   if (["rejected", "cancelled", "expired", "pollTimedOut"].includes(flowStatus)) {
     return (
       <Screen>
-        <HeaderBack title="Pagamento" onReturnPress={() => router.back()} />
+        <HeaderBack title="Pagamento" onReturnPress={() => router.dismissTo("/main/home")} />
         <PaymentResult
           description={failureCopy(flowStatus, status)}
           onPrimaryPress={dismissToRecharge}
@@ -264,7 +264,7 @@ export default function PaymentScreen() {
 
   return (
     <Screen>
-      <HeaderBack title="Pagamento PIX" onReturnPress={() => router.back()} />
+      <HeaderBack title="Pagamento PIX" onReturnPress={() => router.dismissTo("/main/home")} />
       <Scroll contentContainerStyle={{ flexGrow: 1 }}>
         <PaymentContent>
           <Instruction>

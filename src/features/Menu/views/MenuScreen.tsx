@@ -63,7 +63,7 @@ export default function MenuScreen() {
 
   return (
     <Container>
-      <HeaderBack title="Cardápio" onReturnPress={() => router.replace("/main/home")} />
+      <HeaderBack title="Cardápio" onReturnPress={() => router.dismissTo("/main/home")} />
       <Table>
         <TableHeader>
           <TableFilterSelect value={ruPreset} defaultValue="0001" options={RU_OPTIONS} onChange={handleRuChange} />

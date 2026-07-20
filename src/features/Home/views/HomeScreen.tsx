@@ -111,8 +111,8 @@ export default function HomeScreen() {
           name={accountQuery.data?.consumer.name ?? sessionUser?.name ?? "usuário"}
           status={mapHeaderStatus(accountQuery.data?.consumer.situation)}
           onMenuPress={() => setIsMenuOpen(true)}
-          onNotificationsPress={() => router.push(SETTINGS_ROUTE)}
-          onHelpPress={() => router.push("/about")}
+          onNotificationsPress={() => router.dismissTo(SETTINGS_ROUTE)}
+          onHelpPress={() => router.dismissTo("/about")}
         />
         <Content>
           {accountNotice ? (
@@ -136,7 +136,7 @@ export default function HomeScreen() {
               if (!canOpenRecharge) {
                 return;
               }
-              router.push(RECHARGE_ROUTE);
+              router.dismissTo(RECHARGE_ROUTE);
             }}
             style={!canOpenRecharge ? { opacity: 0.55 } : undefined}
           >
@@ -153,7 +153,7 @@ export default function HomeScreen() {
           <HistoryActions>
             <HistoryAction
               activeOpacity={0.8}
-              onPress={() => router.push(RECHARGE_HISTORY_ROUTE)}
+              onPress={() => router.dismissTo(RECHARGE_HISTORY_ROUTE)}
             >
               <ActionIconBox>
                 <IconSymbol
@@ -175,7 +175,7 @@ export default function HomeScreen() {
 
             <HistoryAction
               activeOpacity={0.8}
-              onPress={() => router.push(MEAL_HISTORY_ROUTE)}
+              onPress={() => router.dismissTo(MEAL_HISTORY_ROUTE)}
             >
               <ActionIconBox>
                 <IconSymbol

@@ -83,7 +83,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
   function handleNavigation(route?: Href) {
     if (route) {
-      router.push(route);
+      router.dismissTo(route);
     }
 
     onClose();
@@ -98,7 +98,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     try {
       onClose();
       await logout();
-      router.replace(LOGIN_ROUTE);
+      router.dismissTo(LOGIN_ROUTE);
     } finally {
       setIsLoggingOut(false);
     }

@@ -239,7 +239,7 @@ export function ConfigurationScreen() {
   return (
     <Container contentContainerStyle={{ flexGrow: 1 }}>
       <Content>
-        <HeaderBack title="Configurações" onReturnPress={() => router.back()} />
+        <HeaderBack title="Configurações" onReturnPress={() => router.dismissTo("/main/home")} />
 
         <Section>
           <SectionTitle>Notificações</SectionTitle>

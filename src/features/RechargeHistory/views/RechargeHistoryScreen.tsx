@@ -55,7 +55,7 @@ export default function RechargeHistoryScreen() {
 
   return (
     <Container>
-      <HeaderBack title="Histórico de Recargas" onReturnPress={() => router.replace("/main/home")} />
+      <HeaderBack title="Histórico de Recargas" onReturnPress={() => router.dismissTo("/main/home")} />
       <Table>
         <TableHeader>
           <TableFilterSelect

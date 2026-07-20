@@ -60,7 +60,7 @@ export default function MealHistoryScreen() {
 
   return (
     <Container>
-      <HeaderBack title="Histórico de Refeições" onReturnPress={() => router.replace("/main/home")} />
+      <HeaderBack title="Histórico de Refeições" onReturnPress={() => router.dismissTo("/main/home")} />
       <Table>
         <TableHeader>
           <TableFilterSelect
@@ -93,7 +93,7 @@ export default function MealHistoryScreen() {
               <ItemLeft>
                 <ItemLeftTitle>{item.branch.name}</ItemLeftTitle>
                 <ItemLeftSub>
-                  {formatDate(item.dateTime)} · {formatTime(item.dateTime)} · {item.quantity} refeição{item.quantity === 1 ? "" : "ões"}
+                  {formatDate(item.dateTime)} · {formatTime(item.dateTime)} · {item.quantity} {item.quantity === 1 ? "refeição" : "refeições"}
                 </ItemLeftSub>
               </ItemLeft>
               {item.free ? (

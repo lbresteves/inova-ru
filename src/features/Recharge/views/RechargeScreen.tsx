@@ -70,7 +70,7 @@ export default function RechargeScreen() {
 
     try {
       const payment = await createPaymentMutation.mutateAsync(amount);
-      router.push({
+      router.dismissTo({
         pathname: "/main/recharge/payment",
         params: { paymentId: payment.id },
       });
@@ -81,7 +81,7 @@ export default function RechargeScreen() {
 
   return (
     <Screen>
-      <HeaderBack title="Recarregar" onReturnPress={() => router.back()} />
+      <HeaderBack title="Recarregar" onReturnPress={() => router.dismissTo("/main/home")} />
       <Scroll
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"

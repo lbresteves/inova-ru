@@ -7,7 +7,7 @@ import { Container, Row } from "./styles/HeaderBack.styled";
 
 export function HeaderBack({ title, onReturnPress }: { title: string; onReturnPress?: () => void }) {
     const router = useRouter();
-    const onPress = onReturnPress || (() => router.replace({ pathname: "/" }));
+    const onPress = onReturnPress || (() => router.dismissTo({ pathname: "/main/home" }));
     
     return (
         <SafeAreaView edges={["top"]} style={{ backgroundColor: "transparent" }}>

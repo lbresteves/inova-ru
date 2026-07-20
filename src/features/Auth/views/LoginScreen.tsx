@@ -58,7 +58,7 @@ export default function LoginScreen() {
     try {
       await loginMutation.mutateAsync(form);
       setForm(INITIAL_FORM);
-      router.replace("/main/home");
+      router.dismissTo("/main/home");
     } catch {
       // The mutation error is rendered below the fields.
     }
