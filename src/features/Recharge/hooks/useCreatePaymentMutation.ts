@@ -19,7 +19,12 @@ export function useCreatePaymentMutation() {
       queryClient.setQueryData(rechargeKeys.payment(payment.id), payment);
 
       if (session?.subjectCpf) {
-        await activePaymentStorage.set(payment, session.subjectCpf);
+        try {
+          await activePaymentStorage.set(payment, session.subjectCpf);
+        } catch {
+          // The server already created the payment. Local recovery persistence
+          // must not turn a successful HTTP 201 into a failed mutation.
+        }
       }
     },
   });

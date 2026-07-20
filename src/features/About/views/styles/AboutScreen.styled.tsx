@@ -2,13 +2,16 @@ import styled from "@emotion/native";
 import { ThemedText, ThemedView } from "@shared/components";
 
 export const Container = styled(ThemedView)(({ theme }) => ({
-  backgroundColor: theme.colors.background,
+  backgroundColor: theme.colors.surface,
+  display: "flex",
+  flexDirection: "column",
   flex: 1,
 }));
 
 export const ContentScroll = styled.ScrollView({
   flex: 1,
   paddingHorizontal: 24,
+  marginTop: 16,
 });
 
 export const CustomHeaderRow = styled.View({

@@ -35,8 +35,11 @@ export function mapPaymentStatus(value: string): PaymentStatus {
 
 function readPaymentId(record: Record<string, unknown>): string {
   const value = record.payment_id;
-  if ((typeof value === "string" && value.trim()) || typeof value === "number") {
+  if (typeof value === "number" && Number.isInteger(value) && value > 0) {
     return String(value);
+  }
+  if (typeof value === "string" && /^\d+$/.test(value) && Number(value) > 0) {
+    return value;
   }
 
   throw createContractError("ID do pagamento inválido.", record);
@@ -44,14 +47,33 @@ function readPaymentId(record: Record<string, unknown>): string {
 
 function createQrCodeUri(base64: string): string {
   const value = base64.trim();
-
   if (!value) {
     throw createContractError("QR Code base64 ausente.", base64);
   }
 
-  return value.startsWith("data:image/")
-    ? value
-    : `data:image/png;base64,${value}`;
+  if (value.startsWith("data:image/")) {
+    return value;
+  }
+
+  if (!/^[A-Za-z0-9+/=\s]+$/.test(value)) {
+    throw createContractError("QR Code base64 inválido.", base64);
+  }
+
+  return `data:image/png;base64,${value.replace(/\s/g, "")}`;
+}
+
+function readTicketUrl(record: Record<string, unknown>): string {
+  const value = readString(record, "ticket_url");
+  try {
+    const url = new URL(value);
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return value;
+    }
+  } catch {
+    // Converted to a contract error below.
+  }
+
+  throw createContractError("URL do ticket de pagamento inválida.", value);
 }
 
 export function mapCreatedPayment(
@@ -59,6 +81,13 @@ export function mapCreatedPayment(
   amount: number,
 ): CreatedPayment {
   const root = assertRecord(dto, "payment");
+  const status = mapPaymentStatus(readString(root, "status"));
+  if (status !== "pending") {
+    throw createContractError(
+      "O pagamento criado deve iniciar com status pending.",
+      root,
+    );
+  }
 
   return {
     amount,
@@ -66,8 +95,8 @@ export function mapCreatedPayment(
     expiresAt: readDateString(root, "expiration"),
     id: readPaymentId(root),
     qrCodeUri: createQrCodeUri(readString(root, "qr_code_base64")),
-    status: mapPaymentStatus(readString(root, "status")),
-    ticketUrl: readString(root, "ticket_url"),
+    status,
+    ticketUrl: readTicketUrl(root),
   };
 }
 

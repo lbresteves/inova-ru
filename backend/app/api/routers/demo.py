@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from decimal import Decimal
-
 from app.core.errors import ApiException
-from app.domain.models import ConsumerSituation, PaymentStatus
-from app.repositories.memory import cents, money, repository
-from app.schemas.demo import DemoBalanceAdjustment, DemoMealCreate, DemoSituationPatch, DemoUserCreate
+from app.core.rate_limit import rate_limiter
+from app.domain.models import ConsumerSituation, Payment, PaymentStatus
+from app.repositories.memory import RESTAURANTS, cents, money, repository
+from app.schemas.demo import (
+    DemoBalanceAdjustment,
+    DemoMealCreate,
+    DemoSituationPatch,
+    DemoUserCreate,
+)
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/demo", tags=["demo"])
@@ -32,15 +36,20 @@ def _user_payload(cpf: str) -> dict[str, object]:
     }
 
 
+def _reset_demo_state() -> None:
+    repository.reset()
+    rate_limiter.reset()
+
+
 @router.post("/reset")
 def reset() -> dict[str, object]:
-    repository.reset()
+    _reset_demo_state()
     return {"ok": True}
 
 
 @router.post("/seed")
 def seed() -> dict[str, object]:
-    repository.seed()
+    _reset_demo_state()
     return {"ok": True, "users": list(repository.state.users)}
 
 
@@ -84,31 +93,45 @@ def adjust_balance(cpf: str, payload: DemoBalanceAdjustment) -> dict[str, object
     user = repository.state.users.get(cpf)
     if user is None:
         raise ApiException(404, "Consumidor não encontrado.")
-    user.balance_cents = max(0, user.balance_cents + cents(payload.valor))
+    adjusted = user.balance_cents + cents(payload.valor)
+    if adjusted < 0:
+        raise ApiException(422, "O ajuste deixaria o saldo negativo.")
+    user.balance_cents = adjusted
     return _user_payload(cpf)
 
 
 @router.post("/users/{cpf}/meals", status_code=201)
 def create_meal(cpf: str, payload: DemoMealCreate) -> dict[str, object]:
-    if cpf not in repository.state.users:
-        raise ApiException(404, "Consumidor não encontrado.")
+    user = repository.state.users.get(cpf)
+    if user is None or user.situacao == ConsumerSituation.INACTIVE:
+        raise ApiException(404, "Consumidor não encontrado ou inativo.")
+    if user.situacao == ConsumerSituation.BLOCKED:
+        raise ApiException(422, "Consumo indisponível para consumidor bloqueado.")
+    if payload.filial not in RESTAURANTS:
+        raise ApiException(422, "Código de Restaurante Universitário inválido.")
+
+    value_cents = cents(payload.valor_total)
+    if not payload.gratuidade and value_cents > user.balance_cents:
+        raise ApiException(422, "Saldo insuficiente para registrar a refeição.")
+
     item = repository.add_meal(
         cpf,
         payload.filial,
-        payload.filial_nome,
+        RESTAURANTS[payload.filial],
         payload.quantidade,
-        cents(payload.valor_total),
+        value_cents,
         payload.gratuidade,
     )
-    return {"id": item.id, "saldo": money(repository.state.users[cpf].balance_cents)}
+    return {"id": item.id, "saldo": money(user.balance_cents)}
 
 
 @router.post("/users/{cpf}/sessions/invalidate")
 def invalidate_sessions(cpf: str) -> dict[str, object]:
     if cpf not in repository.state.users:
         raise ApiException(404, "Consumidor não encontrado.")
-    # The demo JWT implementation is stateless; tests can invalidate a known jti by using /demo/sessions/{jti}/invalidate.
-    return {"ok": True, "message": "Use /demo/sessions/{jti}/invalidate for specific active tokens."}
+    issued_jtis = repository.state.issued_jtis_by_cpf.get(cpf, set())
+    repository.state.invalidated_jtis.update(issued_jtis)
+    return {"ok": True, "invalidated": len(issued_jtis)}
 
 
 @router.post("/sessions/{jti}/invalidate")
@@ -117,7 +140,7 @@ def invalidate_session(jti: str) -> dict[str, object]:
     return {"ok": True}
 
 
-def _payment(payment_id: int):
+def _payment(payment_id: int) -> Payment:
     payment = repository.state.payments.get(payment_id)
     if payment is None:
         raise ApiException(404, "Pagamento não encontrado.")
@@ -139,6 +162,8 @@ def _payment_payload(payment_id: int) -> dict[str, object]:
 @router.post("/payments/{payment_id}/approve")
 def approve_payment(payment_id: int) -> dict[str, object]:
     payment = _payment(payment_id)
+    if payment.status == PaymentStatus.APPROVED:
+        return _payment_payload(payment_id)
     if payment.status != PaymentStatus.PENDING:
         raise ApiException(422, "Apenas pagamentos pendentes podem ser aprovados.")
     payment.status = PaymentStatus.APPROVED
@@ -172,6 +197,8 @@ def expire_payment(payment_id: int) -> dict[str, object]:
 
 def _terminal(payment_id: int, status: PaymentStatus, detail: str) -> dict[str, object]:
     payment = _payment(payment_id)
+    if payment.status == status:
+        return _payment_payload(payment_id)
     if payment.status != PaymentStatus.PENDING:
         raise ApiException(422, "Apenas pagamentos pendentes podem mudar para este estado.")
     payment.status = status

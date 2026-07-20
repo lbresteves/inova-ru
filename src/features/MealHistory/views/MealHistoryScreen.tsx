@@ -93,7 +93,7 @@ export default function MealHistoryScreen() {
               <ItemLeft>
                 <ItemLeftTitle>{item.branch.name}</ItemLeftTitle>
                 <ItemLeftSub>
-                  {formatDate(item.dateTime)} · {formatTime(item.dateTime)} · {item.quantity} refeição{item.quantity === 1 ? "" : "ões"} · {item.consumerType}
+                  {formatDate(item.dateTime)} · {formatTime(item.dateTime)} · {item.quantity} refeição{item.quantity === 1 ? "" : "ões"}
                 </ItemLeftSub>
               </ItemLeft>
               {item.free ? (

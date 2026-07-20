@@ -6,7 +6,7 @@ export type SessionUser = {
 };
 
 export type AuthSession = {
-  expiresAt: string | null;
+  schemaVersion: 1;
   subjectCpf: string;
   token: string;
   user: SessionUser;

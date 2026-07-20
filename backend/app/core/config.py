@@ -15,7 +15,7 @@ def _bool_env(name: str, default: bool) -> bool:
 class Settings:
     demo_api_enabled: bool = _bool_env("DEMO_API_ENABLED", True)
     demo_api_secret: str = os.getenv("DEMO_API_SECRET", "local-demo-secret")
-    jwt_secret: str = os.getenv("DEMO_JWT_SECRET", "local-dev-only-change-me")
+    jwt_secret: str = os.getenv("DEMO_JWT_SECRET", "local-dev-only-change-me-use-env-2026")
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = int(os.getenv("DEMO_ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 

@@ -25,7 +25,7 @@ export function getApiErrorMessage(error: unknown): string {
     case 400:
       return error.message || "Revise os dados enviados e tente novamente.";
     case 401:
-      return "Sua sessão expirou. Entre novamente.";
+      return error.message || "Sua sessão expirou. Entre novamente.";
     case 403:
       return "Você não tem permissão para acessar este recurso.";
     case 404:

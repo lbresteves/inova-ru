@@ -1,4 +1,4 @@
-import { IconSymbol } from "@shared/components";
+import { HeaderBack, IconSymbol } from "@shared/components";
 import { Stack, useRouter } from "expo-router";
 import { faqData } from "../utils/faq-data";
 import { FaqItem } from "./FaqItem";
@@ -22,16 +22,7 @@ export function AboutScreen() {
     <Container>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <CustomHeaderRow>
-        <BackButtonBox
-          accessibilityLabel="Voltar"
-          accessibilityRole="button"
-          onPress={() => router.back()}
-        >
-          <IconSymbol color="primary" name="arrow.left" size={24} />
-        </BackButtonBox>
-        <HeaderTitle>About</HeaderTitle>
-      </CustomHeaderRow>
+      <HeaderBack title="About" onReturnPress={() => router.replace("/main/home")} />
 
       <ContentScroll contentContainerStyle={{ paddingBottom: 40 }}>
         <HeroSection>

@@ -1,24 +1,43 @@
-import { assertRecord, readNumber, readString } from "@shared/api";
+import {
+  assertRecord,
+  createContractError,
+  readInteger,
+  readString,
+} from "@shared/api";
 import type { AuthSession } from "../types/AuthSession";
 import type { LoginResponseDto } from "../types/LoginDto";
-import { readJwtExpiration, readJwtSubject } from "./jwt";
+
+function readFlag(
+  record: Record<string, unknown>,
+  key: string,
+  path: string,
+): boolean {
+  const value = readInteger(record, key, path);
+  if (value !== 0 && value !== 1) {
+    throw createContractError(`Campo ${path} deve ser 0 ou 1.`, record);
+  }
+  return value === 1;
+}
 
 export function mapLoginResponse(
   dto: LoginResponseDto,
   subjectCpf: string,
 ): AuthSession {
   const root = assertRecord(dto, "login");
-  const token = readString(root, "token");
   const usuario = assertRecord(root.usuario, "usuario");
 
   return {
-    expiresAt: readJwtExpiration(token),
-    subjectCpf: readJwtSubject(token) ?? subjectCpf,
-    token,
+    schemaVersion: 1,
+    subjectCpf,
+    token: readString(root, "token"),
     user: {
       email: readString(usuario, "email", "usuario.email"),
-      isEmployee: readNumber(usuario, "isColaborador", "usuario.isColaborador") === 1,
-      isStudent: readNumber(usuario, "isAluno", "usuario.isAluno") === 1,
+      isEmployee: readFlag(
+        usuario,
+        "isColaborador",
+        "usuario.isColaborador",
+      ),
+      isStudent: readFlag(usuario, "isAluno", "usuario.isAluno"),
       name: readString(usuario, "nome", "usuario.nome"),
     },
   };

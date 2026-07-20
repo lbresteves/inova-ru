@@ -1,3 +1,4 @@
+import { ApiError } from "@shared/api";
 import type { PaymentStatusResult } from "../types/Recharge";
 
 const MAX_POLLING_MS = 2 * 60 * 1_000;
@@ -10,6 +11,21 @@ export function isTerminalPaymentResult(result: PaymentStatusResult): boolean {
     result.status === "cancelled" ||
     result.status === "expired" ||
     (result.status === "approved" && result.credited)
+  );
+}
+
+export function isRetryablePollingError(error: unknown): boolean {
+  if (!(error instanceof ApiError)) {
+    return false;
+  }
+
+  if (error.kind === "network" || error.kind === "timeout") {
+    return true;
+  }
+
+  return (
+    error.kind === "http" &&
+    (error.status === 429 || (error.status !== undefined && error.status >= 500))
   );
 }
 

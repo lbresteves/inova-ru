@@ -115,14 +115,18 @@ export default function RechargeScreen() {
             {validationError ? (
               <ErrorText>{validationError}</ErrorText>
             ) : (
-              <HintText>Mínimo R$ 5,00 · Máximo R$ 500,00</HintText>
+              <HintText>
+                Mínimo R$ 5,00 · Máximo {formatCurrency(
+                  balance?.maxRechargeAmount ?? 500,
+                )}
+              </HintText>
             )}
           </Section>
 
           <Notice>
             <NoticeText>
-              {`O saldo após a recarga não pode ultrapassar o limite de ${formatCurrency(
-                balance?.limit ?? 500,
+              {`O valor máximo permitido por recarga é ${formatCurrency(
+                balance?.maxRechargeAmount ?? 500,
               )}.`}
             </NoticeText>
           </Notice>

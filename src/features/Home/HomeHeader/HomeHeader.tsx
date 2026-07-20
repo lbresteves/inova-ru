@@ -39,6 +39,11 @@ export function HomeHeader({
   const [isBalanceVisible, setIsBalanceVisible] = useState(true);
 
   const balanceText = isBalanceVisible ? balance : "R$ ****";
+  const formattedName = name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
 
   function toggleBalanceVisibility() {
     setIsBalanceVisible((isVisible) => !isVisible);
@@ -64,7 +69,7 @@ export function HomeHeader({
       </TopBar>
 
       <GreetingRow>
-        <GreetingText type="title">Olá, {name}</GreetingText>
+        <GreetingText type="title">{formattedName}</GreetingText>
         <StatusBadge status={status} />
       </GreetingRow>
 

@@ -1,5 +1,5 @@
 import { createContractError } from "./ApiError";
-import { assertRecord, readNumber } from "./validation";
+import { assertRecord, readInteger } from "./validation";
 
 export type Pagination = {
   total: number;
@@ -13,7 +13,10 @@ export type PaginatedResponseDto<TItem> = {
   pagination: Pagination;
 };
 
-export function readArray(record: Record<string, unknown>, key: string): unknown[] {
+export function readArray(
+  record: Record<string, unknown>,
+  key: string,
+): unknown[] {
   const value = record[key];
   if (Array.isArray(value)) {
     return value;
@@ -25,17 +28,23 @@ export function readArray(record: Record<string, unknown>, key: string): unknown
 export function mapPagination(value: unknown): Pagination {
   const pagination = assertRecord(value, "pagination");
   const result = {
-    currentPage: readNumber(pagination, "currentPage", "pagination.currentPage"),
-    lastPage: readNumber(pagination, "lastPage", "pagination.lastPage"),
-    perPage: readNumber(pagination, "perPage", "pagination.perPage"),
-    total: readNumber(pagination, "total", "pagination.total"),
+    currentPage: readInteger(
+      pagination,
+      "currentPage",
+      "pagination.currentPage",
+    ),
+    lastPage: readInteger(pagination, "lastPage", "pagination.lastPage"),
+    perPage: readInteger(pagination, "perPage", "pagination.perPage"),
+    total: readInteger(pagination, "total", "pagination.total"),
   };
 
   if (
     result.currentPage < 1 ||
     result.lastPage < 1 ||
     result.perPage < 1 ||
-    result.total < 0
+    result.perPage > 100 ||
+    result.total < 0 ||
+    result.currentPage > result.lastPage
   ) {
     throw createContractError("Paginação inválida.", value);
   }

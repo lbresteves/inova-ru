@@ -20,6 +20,7 @@ def create_access_token(cpf: str) -> str:
         "exp": int(expires_at.timestamp()),
         "iat": int(now_utc().timestamp()),
     }
+    repository.state.issued_jtis_by_cpf.setdefault(cpf, set()).add(jti)
     return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
 
 
@@ -45,8 +46,13 @@ def decode_access_token(token: str) -> dict[str, object]:
 def bearer_token(authorization: str | None = Header(default=None, alias="Authorization")) -> str:
     if not authorization or not authorization.lower().startswith("bearer "):
         raise ApiException(401, "Token ausente, inválido ou expirado.")
-    return authorization.split(" ", 1)[1].strip()
+    token = authorization.split(" ", 1)[1].strip()
+    if not token:
+        raise ApiException(401, "Token ausente, inválido ou expirado.")
+    return token
 
 
-def authenticated_payload(authorization: str | None = Header(default=None, alias="Authorization")) -> dict[str, object]:
+def authenticated_payload(
+    authorization: str | None = Header(default=None, alias="Authorization"),
+) -> dict[str, object]:
     return decode_access_token(bearer_token(authorization))

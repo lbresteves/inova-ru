@@ -5,6 +5,7 @@ import type { PaymentStatusResult } from "../types/Recharge";
 import {
   getNextPollingDelayMs,
   hasPollingTimedOut,
+  isRetryablePollingError,
   isTerminalPaymentResult,
 } from "../utils/paymentPollingPolicy";
 
@@ -25,6 +26,7 @@ export function usePaymentStatusPolling(
     isTimedOut: false,
   });
   const attemptRef = useRef(0);
+  const hasRequestedRef = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const activeRef = useRef(false);
@@ -47,15 +49,26 @@ export function usePaymentStatusPolling(
       return;
     }
 
-    if (hasPollingTimedOut(pollingStartedAt)) {
-      setState((current) => ({ ...current, isFetching: false, isTimedOut: true }));
+    const timedOutBeforeRequest = hasPollingTimedOut(pollingStartedAt);
+    if (timedOutBeforeRequest && hasRequestedRef.current) {
+      setState((current) => ({
+        ...current,
+        isFetching: false,
+        isTimedOut: true,
+      }));
       return;
     }
 
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
-    setState((current) => ({ ...current, isFetching: true, error: undefined }));
+    hasRequestedRef.current = true;
+    setState((current) => ({
+      ...current,
+      isFetching: true,
+      isTimedOut: false,
+      error: undefined,
+    }));
 
     try {
       const result = await rechargeRepository.getPaymentStatus(
@@ -66,12 +79,17 @@ export function usePaymentStatusPolling(
         return;
       }
 
-      setState({ data: result, isFetching: false, isTimedOut: false });
-
       if (isTerminalPaymentResult(result)) {
+        setState({ data: result, isFetching: false, isTimedOut: false });
         return;
       }
 
+      if (hasPollingTimedOut(pollingStartedAt)) {
+        setState({ data: result, isFetching: false, isTimedOut: true });
+        return;
+      }
+
+      setState({ data: result, isFetching: false, isTimedOut: false });
       const delay = getNextPollingDelayMs(attemptRef.current++);
       timeoutRef.current = setTimeout(() => void poll(), delay);
     } catch (error) {
@@ -83,8 +101,20 @@ export function usePaymentStatusPolling(
         return;
       }
 
-      setState((current) => ({ ...current, error, isFetching: false }));
-      const retryAfter = error instanceof ApiError ? error.retryAfterSeconds : undefined;
+      const timedOut = hasPollingTimedOut(pollingStartedAt);
+      setState((current) => ({
+        ...current,
+        error,
+        isFetching: false,
+        isTimedOut: timedOut,
+      }));
+
+      if (!isRetryablePollingError(error) || timedOut) {
+        return;
+      }
+
+      const retryAfter =
+        error instanceof ApiError ? error.retryAfterSeconds : undefined;
       const delay = getNextPollingDelayMs(attemptRef.current++, retryAfter);
       timeoutRef.current = setTimeout(() => void poll(), delay);
     }
@@ -93,6 +123,7 @@ export function usePaymentStatusPolling(
   useEffect(() => {
     activeRef.current = enabled;
     attemptRef.current = 0;
+    hasRequestedRef.current = false;
     setState({ isFetching: false, isTimedOut: false });
 
     if (enabled) {
@@ -107,6 +138,7 @@ export function usePaymentStatusPolling(
 
   const refetch = useCallback(async () => {
     attemptRef.current = 0;
+    hasRequestedRef.current = false;
     await poll();
   }, [poll]);
 
