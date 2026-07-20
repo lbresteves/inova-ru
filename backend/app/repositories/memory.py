@@ -66,7 +66,7 @@ class MemoryRepository:
         self.state = DemoState()
         self.add_user(
             cpf="12345678901",
-            password="senha_do_usuario",
+            password="passkey123",
             nome="JOÃO DA SILVA",
             email="joao@ufmg.br",
             situacao=ConsumerSituation.ACTIVE,
@@ -74,7 +74,7 @@ class MemoryRepository:
         )
         self.add_user(
             cpf="22222222222",
-            password="senha_do_usuario",
+            password="passkey123",
             nome="MARIA COSTA",
             email="maria@ufmg.br",
             situacao=ConsumerSituation.BLOCKED,
@@ -82,7 +82,7 @@ class MemoryRepository:
         )
         self.add_user(
             cpf="33333333333",
-            password="senha_do_usuario",
+            password="passkey123",
             nome="PAULO INATIVO",
             email="paulo@ufmg.br",
             situacao=ConsumerSituation.INACTIVE,
