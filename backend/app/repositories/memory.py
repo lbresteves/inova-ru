@@ -173,7 +173,7 @@ class MemoryRepository:
     def create_payment(self, cpf: str, amount_cents: int) -> Payment:
         payment_id = self.state.next_payment_id
         self.state.next_payment_id += 1
-        expiration = now_utc() + timedelta(minutes=5)
+        expiration = now_utc() + timedelta(minutes=2)
         payload = f"INOVARU-DEMO-PIX|payment_id={payment_id}|cpf={cpf}|amount={money(amount_cents):.2f}"
         payment = Payment(
             payment_id=payment_id,

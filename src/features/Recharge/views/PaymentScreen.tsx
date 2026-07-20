@@ -220,7 +220,7 @@ export default function PaymentScreen() {
         <PaymentResult
           description={`Você adicionou ${formatCurrency(payment.amount)} em créditos.`}
           onPrimaryPress={() => router.replace("/main/home")}
-          primaryLabel="Voltar ao início"
+          primaryLabel="Voltar"
           title="Recarga confirmada!"
           type="success"
         >
@@ -246,7 +246,7 @@ export default function PaymentScreen() {
           onPrimaryPress={() => router.replace("/main/recharge")}
           onSecondaryPress={() => router.replace("/main/home")}
           primaryLabel="Tentar novamente"
-          secondaryLabel="Voltar ao início"
+          secondaryLabel="Voltar"
           title={flowStatus === "pollTimedOut" ? "Tempo de confirmação excedido" : "Pagamento não confirmado"}
           type="failure"
         />
